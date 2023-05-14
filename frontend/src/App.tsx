@@ -1,10 +1,12 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./App.css";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import DashboardPage from "./pages/Dashboard";
 import CreateSquadPage from "./pages/Squad/Create";
 import ViewSquadPage from "./pages/Squad/View";
+import ViewLineupPage from "./pages/Lineup/View";
+import CreateLineupPage from "./pages/Lineup/Create";
+import "./App.css";
 
 const router = createBrowserRouter([
   {
@@ -24,8 +26,16 @@ const router = createBrowserRouter([
     element: <CreateSquadPage />,
   },
   {
-    path: "/squads/:id",
+    path: "/squads/:squadId",
     element: <ViewSquadPage />,
+  },
+  {
+    path: "/squads/:squadId/lineups/create",
+    element: <CreateLineupPage />,
+  },
+  {
+    path: "/squads/:squadId/lineups/:lineupId",
+    element: <ViewLineupPage />,
   },
 ]);
 
