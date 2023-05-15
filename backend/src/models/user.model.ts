@@ -5,6 +5,7 @@ import {
   PrimaryKey,
   HasMany,
   DataType,
+  Unique,
 } from "sequelize-typescript";
 import BaseModel from "./base.model";
 import Squad from "./squad.model";
@@ -21,12 +22,14 @@ export default class User extends BaseModel {
   @Column
   UserID!: number;
 
+  @Unique
   @Column(DataType.STRING)
   Username!: string;
 
   @Column(DataType.STRING)
   FullName: string | undefined;
 
+  @Unique
   @Column(DataType.STRING)
   Email: string | undefined;
 

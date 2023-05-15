@@ -29,11 +29,10 @@ router.get("/", async (req: Request, res: Response) => {
 router.put("/:id", async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.id);
-    const { fullName, email, walletAddress } = req.body;
+    const { fullName, walletAddress } = req.body;
     const user = await UserService.updateUser(
       userId,
       fullName,
-      email,
       walletAddress
     );
     if (user) {

@@ -2,6 +2,7 @@ import User from "../models/user.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import sequelize from "sequelize";
 
 dotenv.config();
 
@@ -25,17 +26,24 @@ class AuthenticationService {
   ): Promise<User> {
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const user = new User({
-      Username: username,
-      FullName: fullName,
-      Email: email,
-      PasswordHash: passwordHash,
-      WalletAddress: walletAddress,
-    });
+    try {
+      const user = new User({
+        Username: username,
+        FullName: fullName,
+        Email: email,
+        PasswordHash: passwordHash,
+        WalletAddress: walletAddress,
+      });
 
-    await user.save();
+      await user.save();
 
-    return user;
+      return user;
+    } catch (error) {
+      if (error instanceof sequelize.UniqueConstraintError) {
+        throw new Error("Username or email already exists");
+      }
+      throw error;
+    }
   }
 
   async signIn(

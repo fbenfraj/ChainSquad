@@ -12,7 +12,6 @@ class UserService {
   async updateUser(
     userId: number,
     fullName: string | undefined,
-    email: string | undefined,
     walletAddress: string | undefined
   ): Promise<User | null> {
     const user = await this.getUserById(userId);
@@ -21,7 +20,6 @@ class UserService {
     }
 
     user.FullName = fullName;
-    user.Email = email;
     user.WalletAddress = walletAddress;
 
     await user.save();
