@@ -7,7 +7,7 @@ import {
   DeletedAt,
 } from "sequelize-typescript";
 
-export class BaseModel extends Model {
+export default class BaseModel extends Model {
   @CreatedAt
   @Column({ type: DataType.DATE })
   createdAt!: Date;

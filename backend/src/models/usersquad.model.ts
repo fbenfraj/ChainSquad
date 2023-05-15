@@ -5,16 +5,16 @@ import {
   BelongsTo,
   DataType,
 } from "sequelize-typescript";
-import { BaseModel } from "./base.model";
-import { User } from "./user.model";
-import { Squad } from "./squad.model";
+import BaseModel from "./base.model";
+import User from "./user.model";
+import Squad from "./squad.model";
 import { Role } from "../types";
 
 @Table({
   tableName: "UserSquads",
   timestamps: true,
 })
-export class UserSquad extends BaseModel {
+export default class UserSquad extends BaseModel {
   @ForeignKey(() => User)
   @Column
   UserID!: number;

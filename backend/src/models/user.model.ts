@@ -4,35 +4,36 @@ import {
   AutoIncrement,
   PrimaryKey,
   HasMany,
+  DataType,
 } from "sequelize-typescript";
-import { BaseModel } from "./base.model";
-import { Squad } from "./squad.model";
-import { UserSquad } from "./usersquad.model";
-import { UserLineup } from "./userlineup.model";
+import BaseModel from "./base.model";
+import Squad from "./squad.model";
+import UserSquad from "./usersquad.model";
+import UserLineup from "./userlineup.model";
 
 @Table({
   tableName: "Users",
   timestamps: true,
 })
-export class User extends BaseModel {
+export default class User extends BaseModel {
   @PrimaryKey
   @AutoIncrement
   @Column
   UserID!: number;
 
-  @Column
+  @Column(DataType.STRING)
   Username!: string;
 
-  @Column
+  @Column(DataType.STRING)
   FullName: string | undefined;
 
-  @Column
+  @Column(DataType.STRING)
   Email: string | undefined;
 
-  @Column
+  @Column(DataType.STRING)
   PasswordHash: string | undefined;
 
-  @Column
+  @Column(DataType.STRING)
   WalletAddress: string | undefined;
 
   @HasMany(() => Squad, "CreatedBy")

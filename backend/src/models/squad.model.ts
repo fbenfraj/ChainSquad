@@ -6,26 +6,27 @@ import {
   BelongsTo,
   ForeignKey,
   HasMany,
+  DataType,
 } from "sequelize-typescript";
-import { BaseModel } from "./base.model";
-import { User } from "./user.model";
-import { Lineup } from "./lineup.model";
-import { UserSquad } from "./usersquad.model";
+import BaseModel from "./base.model";
+import User from "./user.model";
+import Lineup from "./lineup.model";
+import UserSquad from "./usersquad.model";
 
 @Table({
   tableName: "Squads",
   timestamps: true,
 })
-export class Squad extends BaseModel {
+export default class Squad extends BaseModel {
   @PrimaryKey
   @AutoIncrement
   @Column
   SquadID!: number;
 
-  @Column
+  @Column(DataType.STRING)
   SquadName!: string;
 
-  @Column
+  @Column(DataType.TEXT)
   Description: string | undefined;
 
   @ForeignKey(() => User)
