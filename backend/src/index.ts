@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { sequelize } from "./database";
 import authenticationRoutes from "./controllers/authentication.controller";
+import usersRoutes from "./controllers/users.controller";
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
 
 app.use(express.json());
 app.use("/auth", authenticationRoutes);
+app.use("/users", usersRoutes);
 
 sequelize.sync().then(() =>
   app.listen(port, () => {
