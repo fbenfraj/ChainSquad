@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "pg": "^8.10.0",
+    "pg-hstore": "^2.3.4",
+    "reflect-metadata": "^0.1.13",
+    "sequelize": "^6.31.1",
+    "sequelize-typescript": "^2.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.1.4",
+    "@types/sequelize": "^4.28.15",
+    "@types/validator": "^13.7.17"
+  }
+}

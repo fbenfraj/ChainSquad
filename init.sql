@@ -1,6 +1,9 @@
 -- Enum for Role
 CREATE TYPE Role AS ENUM ('Manager', 'Coach', 'Player', 'Other');
 
+-- Enum for LineupRole
+CREATE TYPE LineupRole AS ENUM ('Player', 'Coach');
+
 -- Enum for Invitation Status
 CREATE TYPE InvitationStatus AS ENUM ('Pending', 'Accepted', 'Declined');
 
@@ -11,7 +14,6 @@ CREATE TABLE Users (
     FullName VARCHAR(255),
     Email VARCHAR(255) UNIQUE,
     PasswordHash VARCHAR(255),
-    Role Role NOT NULL,
     WalletAddress VARCHAR(255)
 );
 
@@ -42,6 +44,7 @@ CREATE TABLE UserSquads (
     UserSquadID SERIAL PRIMARY KEY,
     UserID INT,
     SquadID INT,
+    Role Role NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (SquadID) REFERENCES Squads(SquadID)
 );
@@ -51,6 +54,7 @@ CREATE TABLE UserLineups (
     UserLineupID SERIAL PRIMARY KEY,
     UserID INT,
     LineupID INT,
+    Role LineupRole NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (LineupID) REFERENCES Lineups(LineupID)
 );
