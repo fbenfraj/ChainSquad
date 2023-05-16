@@ -62,9 +62,10 @@ class SquadService {
     updateFields: { squadName?: string; description?: string }
   ): Promise<Squad | null> {
     try {
+      const { id: squadId } = NumeralIdSchema.parse({ id });
       UpdateSquadValidationSchema.parse(updateFields);
-
-      const squad = await Squad.findOne({ where: { SquadID: id } });
+      
+      const squad = await Squad.findOne({ where: { SquadID: squadId } });
 
       if (!squad) {
         return null;

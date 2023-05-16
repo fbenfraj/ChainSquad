@@ -62,9 +62,10 @@ class LineupService {
     updateFields: { lineupName?: string; squadId?: number }
   ): Promise<Lineup | null> {
     try {
+      const { id: lineupId } = NumeralIdSchema.parse({ id });
       UpdateLineupSchema.parse(updateFields);
 
-      const lineup = await Lineup.findOne({ where: { LineupID: id } });
+      const lineup = await Lineup.findOne({ where: { LineupID: lineupId } });
 
       if (!lineup) {
         return null;

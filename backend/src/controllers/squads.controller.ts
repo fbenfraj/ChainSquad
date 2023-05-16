@@ -1,31 +1,51 @@
 import express, { Request, Response } from "express";
 import SquadService from "../services/squads.service";
+import { z } from "zod";
 
 const router = express.Router();
 
 router.post("/", async (req: Request, res: Response) => {
-  const { squadName, description, createdBy } = req.body;
+  try {
+    const { squadName, description, createdBy } = req.body;
 
-  const newSquad = await SquadService.createSquad(
-    squadName,
-    description,
-    createdBy
-  );
+    const newSquad = await SquadService.createSquad(
+      squadName,
+      description,
+      createdBy
+    );
 
-  res.json(newSquad);
+    res.json(newSquad);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessage = error.errors.map((e) => e.message).join(", ");
+
+      res.status(400).send(errorMessage);
+    } else {
+      res.status(500).send((error as Error).toString());
+    }
+  }
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const squad = await SquadService.getSquadById(parseInt(id));
+    const squad = await SquadService.getSquadById(parseInt(id));
 
-  if (!squad) {
-    res.status(404).json({ error: "Squad not found" });
-    return;
+    if (!squad) {
+      res.status(404).json({ error: "Squad not found" });
+      return;
+    }
+
+    res.json(squad);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessage = error.errors.map((e) => e.message).join(", ");
+      res.status(400).send(errorMessage);
+    } else {
+      res.status(500).send((error as Error).toString());
+    }
   }
-
-  res.json(squad);
 });
 
 router.get("/", async (req: Request, res: Response) => {
@@ -35,33 +55,51 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.put("/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { squadName, description } = req.body;
+  try {
+    const { id } = req.params;
+    const { squadName, description } = req.body;
 
-  const updatedSquad = await SquadService.updateSquad(parseInt(id), {
-    squadName,
-    description,
-  });
+    const updatedSquad = await SquadService.updateSquad(parseInt(id), {
+      squadName,
+      description,
+    });
 
-  if (!updatedSquad) {
-    res.status(404).json({ error: "Squad not found" });
-    return;
+    if (!updatedSquad) {
+      res.status(404).json({ error: "Squad not found" });
+      return;
+    }
+
+    res.json(updatedSquad);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessage = error.errors.map((e) => e.message).join(", ");
+      res.status(400).send(errorMessage);
+    } else {
+      res.status(500).send((error as Error).toString());
+    }
   }
-
-  res.json(updatedSquad);
 });
 
 router.delete("/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const wasDeleted = await SquadService.deleteSquad(parseInt(id));
+    const wasDeleted = await SquadService.deleteSquad(parseInt(id));
 
-  if (!wasDeleted) {
-    res.status(404).json({ error: "Squad not found" });
-    return;
+    if (!wasDeleted) {
+      res.status(404).json({ error: "Squad not found" });
+      return;
+    }
+
+    res.json({ message: "Squad deleted successfully" });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessage = error.errors.map((e) => e.message).join(", ");
+      res.status(400).send(errorMessage);
+    } else {
+      res.status(500).send((error as Error).toString());
+    }
   }
-
-  res.json({ message: "Squad deleted successfully" });
 });
 
 export default router;

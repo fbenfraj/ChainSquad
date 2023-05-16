@@ -1,30 +1,51 @@
 import express, { Request, Response } from "express";
 import LineupService from "../services/lineups.service";
+import { z } from "zod";
 
 const router = express.Router();
 
 router.post("/", async (req: Request, res: Response) => {
-  const { lineupName, squadId, createdBy } = req.body;
-  const newLineup = await LineupService.createLineup(
-    lineupName,
-    squadId,
-    createdBy
-  );
+  try {
+    const { lineupName, squadId, createdBy } = req.body;
 
-  res.json(newLineup);
+    const newLineup = await LineupService.createLineup(
+      lineupName,
+      squadId,
+      createdBy
+    );
+
+    res.json(newLineup);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessage = error.errors.map((e) => e.message).join(", ");
+
+      res.status(400).send(errorMessage);
+    } else {
+      res.status(500).send((error as Error).toString());
+    }
+  }
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const lineup = await LineupService.getLineupById(parseInt(id));
+    const lineup = await LineupService.getLineupById(parseInt(id));
 
-  if (!lineup) {
-    res.status(404).json({ error: "Lineup not found" });
-    return;
+    if (!lineup) {
+      res.status(404).json({ error: "Lineup not found" });
+      return;
+    }
+
+    res.json(lineup);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessage = error.errors.map((e) => e.message).join(", ");
+      res.status(400).send(errorMessage);
+    } else {
+      res.status(500).send((error as Error).toString());
+    }
   }
-
-  res.json(lineup);
 });
 
 router.get("/", async (req: Request, res: Response) => {
@@ -34,33 +55,51 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.put("/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { lineupName, squadId } = req.body;
+  try {
+    const { id } = req.params;
+    const { lineupName, squadId } = req.body;
 
-  const updatedLineup = await LineupService.updateLineup(parseInt(id), {
-    lineupName,
-    squadId,
-  });
+    const updatedLineup = await LineupService.updateLineup(parseInt(id), {
+      lineupName,
+      squadId,
+    });
 
-  if (!updatedLineup) {
-    res.status(404).json({ error: "Lineup not found" });
-    return;
+    if (!updatedLineup) {
+      res.status(404).json({ error: "Lineup not found" });
+      return;
+    }
+
+    res.json(updatedLineup);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessage = error.errors.map((e) => e.message).join(", ");
+      res.status(400).send(errorMessage);
+    } else {
+      res.status(500).send((error as Error).toString());
+    }
   }
-
-  res.json(updatedLineup);
 });
 
 router.delete("/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const wasDeleted = await LineupService.deleteLineup(parseInt(id));
+    const wasDeleted = await LineupService.deleteLineup(parseInt(id));
 
-  if (!wasDeleted) {
-    res.status(404).json({ error: "Lineup not found" });
-    return;
+    if (!wasDeleted) {
+      res.status(404).json({ error: "Lineup not found" });
+      return;
+    }
+
+    res.json({ message: "Lineup deleted successfully" });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessage = error.errors.map((e) => e.message).join(", ");
+      res.status(400).send(errorMessage);
+    } else {
+      res.status(500).send((error as Error).toString());
+    }
   }
-
-  res.json({ message: "Lineup deleted successfully" });
 });
 
 export default router;
