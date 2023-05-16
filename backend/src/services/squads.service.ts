@@ -5,6 +5,7 @@ import {
   SquadValidationSchema,
   UpdateSquadValidationSchema,
 } from "../validations/squad.validation";
+import { NumeralIdSchema } from "../validations/general.validation";
 
 class SquadService {
   async createSquad(
@@ -37,8 +38,18 @@ class SquadService {
   }
 
   async getSquadById(id: number): Promise<Squad | null> {
-    const squad = await Squad.findOne({ where: { SquadID: id } });
-    return squad;
+    try {
+      const { id: squadId } = NumeralIdSchema.parse({ id });
+      const squad = await Squad.findOne({ where: { SquadID: squadId } });
+
+      return squad;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessage = error.errors.map((e) => e.message).join(", ");
+        throw new Error(errorMessage);
+      }
+      throw error;
+    }
   }
 
   async getAllSquads(): Promise<Squad[]> {
@@ -79,15 +90,24 @@ class SquadService {
   }
 
   async deleteSquad(id: number): Promise<boolean> {
-    const squad = await Squad.findOne({ where: { SquadID: id } });
+    try {
+      const { id: squadId } = NumeralIdSchema.parse({ id });
+      const squad = await Squad.findOne({ where: { SquadID: squadId } });
 
-    if (!squad) {
-      return false;
+      if (!squad) {
+        return false;
+      }
+
+      await squad.destroy();
+
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessage = error.errors.map((e) => e.message).join(", ");
+        throw new Error(errorMessage);
+      }
+      throw error;
     }
-
-    await squad.destroy();
-
-    return true;
   }
 }
 

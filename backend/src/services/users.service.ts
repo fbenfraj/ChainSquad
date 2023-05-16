@@ -2,10 +2,19 @@ import { z } from "zod";
 import User from "../models/user.model";
 import { formatAndThrowZodError } from "../utils/validation";
 import { UpdateUserValidationSchema } from "../validations/user.validation";
+import { NumeralIdSchema } from "../validations/general.validation";
 
 class UserService {
   async getUserById(userId: number): Promise<User | null> {
-    return await User.findByPk(userId);
+    try {
+      const { id } = NumeralIdSchema.parse({ id: userId });
+      return await User.findByPk(id);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
+      }
+      throw error;
+    }
   }
 
   async getAllUsers(): Promise<User[]> {
@@ -41,12 +50,21 @@ class UserService {
   }
 
   async deleteUser(userId: number): Promise<void> {
-    const user = await this.getUserById(userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
+    try {
+      const { id } = NumeralIdSchema.parse({ id: userId });
 
-    await user.destroy();
+      const user = await this.getUserById(id);
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      await user.destroy();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
+      }
+      throw error;
+    }
   }
 }
 

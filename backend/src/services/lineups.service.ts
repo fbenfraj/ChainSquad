@@ -5,6 +5,7 @@ import {
   LineupValidationSchema,
   UpdateLineupSchema,
 } from "../validations/lineup.validation";
+import { NumeralIdSchema } from "../validations/general.validation";
 
 class LineupService {
   async createLineup(
@@ -37,8 +38,18 @@ class LineupService {
   }
 
   async getLineupById(id: number): Promise<Lineup | null> {
-    const lineup = await Lineup.findOne({ where: { LineupID: id } });
-    return lineup;
+    try {
+      const { id: lineupId } = NumeralIdSchema.parse({ id });
+      const lineup = await Lineup.findOne({ where: { LineupID: lineupId } });
+
+      return lineup;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessage = error.errors.map((e) => e.message).join(", ");
+        throw new Error(errorMessage);
+      }
+      throw error;
+    }
   }
 
   async getAllLineups(): Promise<Lineup[]> {
@@ -79,15 +90,24 @@ class LineupService {
   }
 
   async deleteLineup(id: number): Promise<boolean> {
-    const lineup = await Lineup.findOne({ where: { LineupID: id } });
+    try {
+      const { id: lineupId } = NumeralIdSchema.parse({ id });
+      const lineup = await Lineup.findOne({ where: { LineupID: lineupId } });
 
-    if (!lineup) {
-      return false;
+      if (!lineup) {
+        return false;
+      }
+
+      await lineup.destroy();
+
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessage = error.errors.map((e) => e.message).join(", ");
+        throw new Error(errorMessage);
+      }
+      throw error;
     }
-
-    await lineup.destroy();
-
-    return true;
   }
 }
 

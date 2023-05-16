@@ -6,20 +6,13 @@ export const UserValidationSchema = z.object({
   email: z.string().email("Must be a valid email address"),
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .refine(
-      (password) => {
-        return (
-          /[a-z]/.test(password) &&
-          /[A-Z]/.test(password) &&
-          /[0-9]/.test(password) &&
-          /[^a-zA-Z0-9]/.test(password)
-        );
-      },
-      {
-        message:
-          "Password must contain lower case, upper case, number, and special character",
-      }
+    .min(8, "Password must be at least 8 characters long")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(
+      /[^a-zA-Z0-9]/,
+      "Password must contain at least one special character"
     ),
 });
 
