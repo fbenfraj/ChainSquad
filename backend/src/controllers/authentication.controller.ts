@@ -5,13 +5,12 @@ const router = express.Router();
 
 router.post("/signup", async (req: Request, res: Response) => {
   try {
-    const { username, fullName, email, password, walletAddress } = req.body;
+    const { username, fullName, email, password } = req.body;
     const newUser = await AuthenticationService.signUp(
       username,
       fullName,
       email,
-      password,
-      walletAddress
+      password
     );
     res.json(newUser);
   } catch (error) {

@@ -1,4 +1,7 @@
+import { z } from "zod";
 import User from "../models/user.model";
+import { formatAndThrowZodError } from "../utils/validation";
+import { UpdateUserValidationSchema } from "../validations/user.validation";
 
 class UserService {
   async getUserById(userId: number): Promise<User | null> {
@@ -11,20 +14,30 @@ class UserService {
 
   async updateUser(
     userId: number,
-    fullName: string | undefined,
-    walletAddress: string | undefined
+    fullName: string | undefined
   ): Promise<User | null> {
-    const user = await this.getUserById(userId);
-    if (!user) {
-      throw new Error("User not found");
+    try {
+      UpdateUserValidationSchema.parse({
+        userId,
+        fullName,
+      });
+
+      const user = await this.getUserById(userId);
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      if (fullName) user.FullName = fullName;
+
+      await user.save();
+
+      return user;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
+      }
+      throw error;
     }
-
-    user.FullName = fullName;
-    user.WalletAddress = walletAddress;
-
-    await user.save();
-
-    return user;
   }
 
   async deleteUser(userId: number): Promise<void> {

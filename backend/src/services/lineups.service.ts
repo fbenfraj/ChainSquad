@@ -1,4 +1,10 @@
+import { z } from "zod";
 import Lineup from "../models/lineup.model";
+import { formatAndThrowZodError } from "../utils/validation";
+import {
+  LineupValidationSchema,
+  UpdateLineupSchema,
+} from "../validations/lineup.validation";
 
 class LineupService {
   async createLineup(
@@ -6,15 +12,28 @@ class LineupService {
     squadId: number,
     createdBy: number
   ): Promise<Lineup> {
-    const lineup = new Lineup({
-      LineupName: lineupName,
-      SquadID: squadId,
-      CreatedBy: createdBy,
-    });
+    try {
+      LineupValidationSchema.parse({
+        lineupName,
+        squadId,
+        createdBy,
+      });
 
-    await lineup.save();
+      const lineup = new Lineup({
+        LineupName: lineupName,
+        SquadID: squadId,
+        CreatedBy: createdBy,
+      });
 
-    return lineup;
+      await lineup.save();
+
+      return lineup;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
+      }
+      throw error;
+    }
   }
 
   async getLineupById(id: number): Promise<Lineup | null> {
@@ -31,23 +50,32 @@ class LineupService {
     id: number,
     updateFields: { lineupName?: string; squadId?: number }
   ): Promise<Lineup | null> {
-    const lineup = await Lineup.findOne({ where: { LineupID: id } });
+    try {
+      UpdateLineupSchema.parse(updateFields);
 
-    if (!lineup) {
-      return null;
+      const lineup = await Lineup.findOne({ where: { LineupID: id } });
+
+      if (!lineup) {
+        return null;
+      }
+
+      if (updateFields.lineupName) {
+        lineup.LineupName = updateFields.lineupName;
+      }
+
+      if (updateFields.squadId) {
+        lineup.SquadID = updateFields.squadId;
+      }
+
+      await lineup.save();
+
+      return lineup;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
+      }
+      throw error;
     }
-
-    if (updateFields.lineupName) {
-      lineup.LineupName = updateFields.lineupName;
-    }
-
-    if (updateFields.squadId) {
-      lineup.SquadID = updateFields.squadId;
-    }
-
-    await lineup.save();
-
-    return lineup;
   }
 
   async deleteLineup(id: number): Promise<boolean> {

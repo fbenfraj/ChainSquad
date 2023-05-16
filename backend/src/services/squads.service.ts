@@ -1,4 +1,10 @@
+import { z } from "zod";
 import Squad from "../models/squad.model";
+import { formatAndThrowZodError } from "../utils/validation";
+import {
+  SquadValidationSchema,
+  UpdateSquadValidationSchema,
+} from "../validations/squad.validation";
 
 class SquadService {
   async createSquad(
@@ -6,15 +12,28 @@ class SquadService {
     description: string,
     createdBy: number
   ): Promise<Squad> {
-    const squad = new Squad({
-      SquadName: squadName,
-      Description: description,
-      CreatedBy: createdBy,
-    });
+    try {
+      SquadValidationSchema.parse({
+        squadName,
+        description,
+        createdBy,
+      });
 
-    await squad.save();
+      const squad = new Squad({
+        SquadName: squadName,
+        Description: description,
+        CreatedBy: createdBy,
+      });
 
-    return squad;
+      await squad.save();
+
+      return squad;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
+      }
+      throw error;
+    }
   }
 
   async getSquadById(id: number): Promise<Squad | null> {
@@ -31,23 +50,32 @@ class SquadService {
     id: number,
     updateFields: { squadName?: string; description?: string }
   ): Promise<Squad | null> {
-    const squad = await Squad.findOne({ where: { SquadID: id } });
+    try {
+      UpdateSquadValidationSchema.parse(updateFields);
 
-    if (!squad) {
-      return null;
+      const squad = await Squad.findOne({ where: { SquadID: id } });
+
+      if (!squad) {
+        return null;
+      }
+
+      if (updateFields.squadName) {
+        squad.SquadName = updateFields.squadName;
+      }
+
+      if (updateFields.description) {
+        squad.Description = updateFields.description;
+      }
+
+      await squad.save();
+
+      return squad;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
+      }
+      throw error;
     }
-
-    if (updateFields.squadName) {
-      squad.SquadName = updateFields.squadName;
-    }
-
-    if (updateFields.description) {
-      squad.Description = updateFields.description;
-    }
-
-    await squad.save();
-
-    return squad;
   }
 
   async deleteSquad(id: number): Promise<boolean> {

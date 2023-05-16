@@ -3,6 +3,13 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import sequelize from "sequelize";
+import { UserValidationSchema } from "../validations/user.validation";
+import { z } from "zod";
+import {
+  RefreshTokenValidationSchema,
+  SignInValidationSchema,
+} from "../validations/authentication.validation";
+import { formatAndThrowZodError } from "../utils/validation";
 
 dotenv.config();
 
@@ -21,18 +28,23 @@ class AuthenticationService {
     username: string,
     fullName: string,
     email: string,
-    password: string,
-    walletAddress: string
+    password: string
   ): Promise<User> {
-    const passwordHash = await bcrypt.hash(password, 10);
-
     try {
+      UserValidationSchema.parse({
+        username,
+        fullName,
+        email,
+        password,
+      });
+
+      const passwordHash = await bcrypt.hash(password, 10);
+
       const user = new User({
         Username: username,
         FullName: fullName,
         Email: email,
         PasswordHash: passwordHash,
-        WalletAddress: walletAddress,
       });
 
       await user.save();
@@ -42,6 +54,9 @@ class AuthenticationService {
       if (error instanceof sequelize.UniqueConstraintError) {
         throw new Error("Username or email already exists");
       }
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
+      }
       throw error;
     }
   }
@@ -50,24 +65,36 @@ class AuthenticationService {
     username: string,
     password: string
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const user = await User.findOne({ where: { Username: username } });
+    try {
+      SignInValidationSchema.parse({
+        username,
+        password,
+      });
 
-    if (!user) {
-      throw new Error("No such user found");
+      const user = await User.findOne({ where: { Username: username } });
+
+      if (!user) {
+        throw new Error("No such user found");
+      }
+
+      const valid = await bcrypt.compare(password, user.PasswordHash || "");
+
+      if (!valid) {
+        throw new Error("Invalid password");
+      }
+
+      const accessToken = jwt.sign({ UserID: user.UserID }, secretKey, {
+        expiresIn,
+      });
+      const refreshToken = this.generateRefreshToken(user.UserID);
+
+      return { accessToken, refreshToken };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
+      }
+      throw error;
     }
-
-    const valid = await bcrypt.compare(password, user.PasswordHash || "");
-
-    if (!valid) {
-      throw new Error("Invalid password");
-    }
-
-    const accessToken = jwt.sign({ UserID: user.UserID }, secretKey, {
-      expiresIn,
-    });
-    const refreshToken = this.generateRefreshToken(user.UserID);
-
-    return { accessToken, refreshToken };
   }
 
   generateRefreshToken(userId: number): string {
@@ -80,10 +107,19 @@ class AuthenticationService {
 
   refreshAccessToken(refreshToken: string): string {
     let userId;
+
     try {
+      RefreshTokenValidationSchema.parse({
+        refreshToken,
+      });
+
       const decoded = jwt.verify(refreshToken, refreshSecret as string);
       userId = (decoded as any).UserID;
-    } catch {
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
+      }
+
       throw new Error("Invalid refresh token");
     }
 

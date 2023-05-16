@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.post("/", async (req: Request, res: Response) => {
   const { lineupName, squadId, createdBy } = req.body;
-  console.log(squadId);
   const newLineup = await LineupService.createLineup(
     lineupName,
     squadId,
