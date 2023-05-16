@@ -52,7 +52,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.id);
     await UserService.deleteUser(userId);
-    res.status(204).send();
+    res.json({ message: "User deleted successfully" });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).send(error.errors[0].message);
