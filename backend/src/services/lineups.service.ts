@@ -110,6 +110,23 @@ class LineupService {
       throw error;
     }
   }
+
+  async getLineupsBySquad(squadId: number): Promise<Lineup[]> {
+    try {
+      const { id: squadIdValidated } = NumeralIdSchema.parse({ id: squadId });
+
+      const lineups = await Lineup.findAll({
+        where: { SquadID: squadIdValidated },
+      });
+
+      return lineups;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
+      }
+      throw error;
+    }
+  }
 }
 
 export default new LineupService();

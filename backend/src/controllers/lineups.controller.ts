@@ -102,4 +102,26 @@ router.delete("/:id", async (req: Request, res: Response) => {
   }
 });
 
+router.get("/squad/:squadId", async (req: Request, res: Response) => {
+  try {
+    const { squadId } = req.params;
+
+    const lineups = await LineupService.getLineupsBySquad(parseInt(squadId));
+
+    if (!lineups || lineups.length === 0) {
+      res.status(404).json({ error: "No lineups found for the given squad" });
+      return;
+    }
+
+    res.json(lineups);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessage = error.errors.map((e) => e.message).join(", ");
+      res.status(400).send(errorMessage);
+    } else {
+      res.status(500).send((error as Error).toString());
+    }
+  }
+});
+
 export default router;

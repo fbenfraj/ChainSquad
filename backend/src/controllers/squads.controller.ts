@@ -102,4 +102,26 @@ router.delete("/:id", async (req: Request, res: Response) => {
   }
 });
 
+router.get("/user/:userId", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const squads = await SquadService.getSquadsByUser(parseInt(userId));
+
+    if (!squads || squads.length === 0) {
+      res.status(404).json({ error: "No squads found for the given user" });
+      return;
+    }
+
+    res.json(squads);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessage = error.errors.map((e) => e.message).join(", ");
+      res.status(400).send(errorMessage);
+    } else {
+      res.status(500).send((error as Error).toString());
+    }
+  }
+});
+
 export default router;

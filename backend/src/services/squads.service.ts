@@ -64,7 +64,7 @@ class SquadService {
     try {
       const { id: squadId } = NumeralIdSchema.parse({ id });
       UpdateSquadValidationSchema.parse(updateFields);
-      
+
       const squad = await Squad.findOne({ where: { SquadID: squadId } });
 
       if (!squad) {
@@ -106,6 +106,20 @@ class SquadService {
       if (error instanceof z.ZodError) {
         const errorMessage = error.errors.map((e) => e.message).join(", ");
         throw new Error(errorMessage);
+      }
+      throw error;
+    }
+  }
+
+  async getSquadsByUser(userId: number): Promise<Squad[]> {
+    try {
+      const { id: validUserId } = NumeralIdSchema.parse({ id: userId });
+      const squads = await Squad.findAll({ where: { CreatedBy: validUserId } });
+
+      return squads;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        formatAndThrowZodError(error);
       }
       throw error;
     }
