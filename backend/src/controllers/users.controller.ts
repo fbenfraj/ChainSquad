@@ -1,10 +1,9 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import UserService from "../services/users.service";
-import { z } from "zod";
 
 const router = express.Router();
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = parseInt(req.params.id);
     const user = await UserService.getUserById(userId);
@@ -14,23 +13,20 @@ router.get("/:id", async (req: Request, res: Response) => {
       res.status(404).send("User not found");
     }
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).send(error.errors[0].message);
-    }
-    res.status(500).send((error as Error).toString());
+    next(error);
   }
 });
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await UserService.getAllUsers();
     res.json(users);
   } catch (error) {
-    res.status(500).send((error as Error).toString());
+    next(error);
   }
 });
 
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = parseInt(req.params.id);
     const { fullName } = req.body;
@@ -41,24 +37,21 @@ router.put("/:id", async (req: Request, res: Response) => {
       res.status(404).send("User not found");
     }
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).send(error.errors[0].message);
-    }
-    res.status(500).send((error as Error).toString());
+    next(error);
   }
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
-  try {
-    const userId = parseInt(req.params.id);
-    await UserService.deleteUser(userId);
-    res.json({ message: "User deleted successfully" });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).send(error.errors[0].message);
+router.delete(
+  "/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = parseInt(req.params.id);
+      await UserService.deleteUser(userId);
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      next(error);
     }
-    res.status(500).send((error as Error).toString());
   }
-});
+);
 
 export default router;

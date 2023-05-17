@@ -4,12 +4,10 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import sequelize from "sequelize";
 import { UserValidationSchema } from "../validations/user.validation";
-import { z } from "zod";
 import {
   RefreshTokenValidationSchema,
   SignInValidationSchema,
 } from "../validations/authentication.validation";
-import { formatAndThrowZodError } from "../utils/validation";
 
 dotenv.config();
 
@@ -54,9 +52,6 @@ class AuthenticationService {
       if (error instanceof sequelize.UniqueConstraintError) {
         throw new Error("Username or email already exists");
       }
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
       throw error;
     }
   }
@@ -66,21 +61,25 @@ class AuthenticationService {
     password: string
   ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
-      SignInValidationSchema.parse({
-        username,
-        password,
-      });
+      const { username: validUsername, password: validPassword } =
+        SignInValidationSchema.parse({
+          username,
+          password,
+        });
 
-      const user = await User.findOne({ where: { Username: username } });
+      const user = await User.findOne({ where: { Username: validUsername } });
 
       if (!user) {
-        throw new Error("No such user found");
+        throw new Error("Invalid credentials");
       }
 
-      const valid = await bcrypt.compare(password, user.PasswordHash || "");
+      const valid = await bcrypt.compare(
+        validPassword,
+        user.PasswordHash || ""
+      );
 
       if (!valid) {
-        throw new Error("Invalid password");
+        throw new Error("Invalid credentials");
       }
 
       const accessToken = jwt.sign({ UserID: user.UserID }, secretKey, {
@@ -90,9 +89,6 @@ class AuthenticationService {
 
       return { accessToken, refreshToken };
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
       throw error;
     }
   }
@@ -116,10 +112,6 @@ class AuthenticationService {
       const decoded = jwt.verify(refreshToken, refreshSecret as string);
       userId = (decoded as any).UserID;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
-
       throw new Error("Invalid refresh token");
     }
 

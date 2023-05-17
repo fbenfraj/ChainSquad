@@ -1,10 +1,9 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import SquadService from "../services/squads.service";
-import { z } from "zod";
 
 const router = express.Router();
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { squadName, description, createdBy } = req.body;
 
@@ -16,17 +15,11 @@ router.post("/", async (req: Request, res: Response) => {
 
     res.json(newSquad);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((e) => e.message).join(", ");
-
-      res.status(400).send(errorMessage);
-    } else {
-      res.status(500).send((error as Error).toString());
-    }
+    next(error);
   }
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
@@ -39,22 +32,21 @@ router.get("/:id", async (req: Request, res: Response) => {
 
     res.json(squad);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((e) => e.message).join(", ");
-      res.status(400).send(errorMessage);
-    } else {
-      res.status(500).send((error as Error).toString());
-    }
+    next(error);
   }
 });
 
-router.get("/", async (req: Request, res: Response) => {
-  const squads = await SquadService.getAllSquads();
+router.get("/", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const squads = await SquadService.getAllSquads();
 
-  res.json(squads);
+    res.json(squads);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const { squadName, description } = req.body;
@@ -71,57 +63,48 @@ router.put("/:id", async (req: Request, res: Response) => {
 
     res.json(updatedSquad);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((e) => e.message).join(", ");
-      res.status(400).send(errorMessage);
-    } else {
-      res.status(500).send((error as Error).toString());
-    }
+    next(error);
   }
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
+router.delete(
+  "/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
 
-    const wasDeleted = await SquadService.deleteSquad(parseInt(id));
+      const wasDeleted = await SquadService.deleteSquad(parseInt(id));
 
-    if (!wasDeleted) {
-      res.status(404).json({ error: "Squad not found" });
-      return;
-    }
+      if (!wasDeleted) {
+        res.status(404).json({ error: "Squad not found" });
+        return;
+      }
 
-    res.json({ message: "Squad deleted successfully" });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((e) => e.message).join(", ");
-      res.status(400).send(errorMessage);
-    } else {
-      res.status(500).send((error as Error).toString());
+      res.json({ message: "Squad deleted successfully" });
+    } catch (error) {
+      next(error);
     }
   }
-});
+);
 
-router.get("/user/:userId", async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.params;
+router.get(
+  "/user/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.params;
 
-    const squads = await SquadService.getSquadsByUser(parseInt(userId));
+      const squads = await SquadService.getSquadsByUser(parseInt(userId));
 
-    if (!squads || squads.length === 0) {
-      res.status(404).json({ error: "No squads found for the given user" });
-      return;
-    }
+      if (!squads || squads.length === 0) {
+        res.status(404).json({ error: "No squads found for the given user" });
+        return;
+      }
 
-    res.json(squads);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((e) => e.message).join(", ");
-      res.status(400).send(errorMessage);
-    } else {
-      res.status(500).send((error as Error).toString());
+      res.json(squads);
+    } catch (error) {
+      next(error);
     }
   }
-});
+);
 
 export default router;

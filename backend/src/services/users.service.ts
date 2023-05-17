@@ -1,6 +1,4 @@
-import { z } from "zod";
 import User from "../models/user.model";
-import { formatAndThrowZodError } from "../utils/validation";
 import { UpdateUserValidationSchema } from "../validations/user.validation";
 import { NumeralIdSchema } from "../validations/general.validation";
 
@@ -10,9 +8,6 @@ class UserService {
       const { id } = NumeralIdSchema.parse({ id: userId });
       return await User.findByPk(id);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
       throw error;
     }
   }
@@ -42,9 +37,6 @@ class UserService {
 
       return user;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
       throw error;
     }
   }
@@ -60,9 +52,6 @@ class UserService {
 
       await user.destroy();
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
       throw error;
     }
   }

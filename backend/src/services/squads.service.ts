@@ -1,6 +1,5 @@
 import { z } from "zod";
 import Squad from "../models/squad.model";
-import { formatAndThrowZodError } from "../utils/validation";
 import {
   SquadValidationSchema,
   UpdateSquadValidationSchema,
@@ -30,9 +29,6 @@ class SquadService {
 
       return squad;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
       throw error;
     }
   }
@@ -83,9 +79,6 @@ class SquadService {
 
       return squad;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
       throw error;
     }
   }
@@ -118,9 +111,6 @@ class SquadService {
 
       return squads;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
       throw error;
     }
   }

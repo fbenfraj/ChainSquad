@@ -1,6 +1,5 @@
 import { z } from "zod";
 import Lineup from "../models/lineup.model";
-import { formatAndThrowZodError } from "../utils/validation";
 import {
   LineupValidationSchema,
   UpdateLineupSchema,
@@ -30,9 +29,6 @@ class LineupService {
 
       return lineup;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
       throw error;
     }
   }
@@ -83,9 +79,6 @@ class LineupService {
 
       return lineup;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
       throw error;
     }
   }
@@ -121,9 +114,6 @@ class LineupService {
 
       return lineups;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        formatAndThrowZodError(error);
-      }
       throw error;
     }
   }
