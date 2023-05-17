@@ -11,6 +11,14 @@ export function handleError(
   if (err instanceof z.ZodError) {
     return res.status(400).json({ error: fromZodError(err) });
   }
+
+  if (
+    err instanceof Error &&
+    err.name === "SequelizeForeignKeyConstraintError"
+  ) {
+    return res.status(409).json({ error: "Foreign entity does not exist" });
+  }
+
   switch (err.message) {
     case "Invalid credentials.":
       return res.status(401).json({ error: err.message });

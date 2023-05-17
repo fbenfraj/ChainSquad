@@ -4,7 +4,7 @@ import {
   SquadValidationSchema,
   UpdateSquadValidationSchema,
 } from "../validations/squad.validation";
-import { NumeralIdSchema } from "../validations/general.validation";
+import { IdSchema } from "../validations/general.validation";
 
 class SquadService {
   async createSquad(
@@ -35,7 +35,7 @@ class SquadService {
 
   async getSquadById(id: number): Promise<Squad | null> {
     try {
-      const { id: squadId } = NumeralIdSchema.parse({ id });
+      const squadId = IdSchema.parse(id);
       const squad = await Squad.findOne({ where: { SquadID: squadId } });
 
       return squad;
@@ -58,7 +58,7 @@ class SquadService {
     updateFields: { squadName?: string; description?: string }
   ): Promise<Squad | null> {
     try {
-      const { id: squadId } = NumeralIdSchema.parse({ id });
+      const squadId = IdSchema.parse(id);
       UpdateSquadValidationSchema.parse(updateFields);
 
       const squad = await Squad.findOne({ where: { SquadID: squadId } });
@@ -85,7 +85,7 @@ class SquadService {
 
   async deleteSquad(id: number): Promise<boolean> {
     try {
-      const { id: squadId } = NumeralIdSchema.parse({ id });
+      const squadId = IdSchema.parse(id);
       const squad = await Squad.findOne({ where: { SquadID: squadId } });
 
       if (!squad) {
@@ -106,7 +106,7 @@ class SquadService {
 
   async getSquadsByUser(userId: number): Promise<Squad[]> {
     try {
-      const { id: validUserId } = NumeralIdSchema.parse({ id: userId });
+      const validUserId = IdSchema.parse(userId);
       const squads = await Squad.findAll({ where: { CreatedBy: validUserId } });
 
       return squads;

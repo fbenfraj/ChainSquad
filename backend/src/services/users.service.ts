@@ -1,11 +1,11 @@
 import User from "../models/user.model";
 import { UpdateUserValidationSchema } from "../validations/user.validation";
-import { NumeralIdSchema } from "../validations/general.validation";
+import { IdSchema } from "../validations/general.validation";
 
 class UserService {
   async getUserById(userId: number): Promise<User | null> {
     try {
-      const { id } = NumeralIdSchema.parse({ id: userId });
+      const id = IdSchema.parse(userId);
       return await User.findByPk(id);
     } catch (error) {
       throw error;
@@ -43,7 +43,7 @@ class UserService {
 
   async deleteUser(userId: number): Promise<void> {
     try {
-      const { id } = NumeralIdSchema.parse({ id: userId });
+      const id = IdSchema.parse(userId);
 
       const user = await this.getUserById(id);
       if (!user) {

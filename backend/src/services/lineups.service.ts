@@ -4,7 +4,7 @@ import {
   LineupValidationSchema,
   UpdateLineupSchema,
 } from "../validations/lineup.validation";
-import { NumeralIdSchema } from "../validations/general.validation";
+import { IdSchema } from "../validations/general.validation";
 
 class LineupService {
   async createLineup(
@@ -35,7 +35,7 @@ class LineupService {
 
   async getLineupById(id: number): Promise<Lineup | null> {
     try {
-      const { id: lineupId } = NumeralIdSchema.parse({ id });
+      const lineupId = IdSchema.parse(id);
       const lineup = await Lineup.findOne({ where: { LineupID: lineupId } });
 
       return lineup;
@@ -49,8 +49,12 @@ class LineupService {
   }
 
   async getAllLineups(): Promise<Lineup[]> {
-    const lineups = await Lineup.findAll();
-    return lineups;
+    try {
+      const lineups = await Lineup.findAll();
+      return lineups;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async updateLineup(
@@ -58,7 +62,7 @@ class LineupService {
     updateFields: { lineupName?: string; squadId?: number }
   ): Promise<Lineup | null> {
     try {
-      const { id: lineupId } = NumeralIdSchema.parse({ id });
+      const lineupId = IdSchema.parse(id);
       UpdateLineupSchema.parse(updateFields);
 
       const lineup = await Lineup.findOne({ where: { LineupID: lineupId } });
@@ -85,7 +89,7 @@ class LineupService {
 
   async deleteLineup(id: number): Promise<boolean> {
     try {
-      const { id: lineupId } = NumeralIdSchema.parse({ id });
+      const lineupId = IdSchema.parse(id);
       const lineup = await Lineup.findOne({ where: { LineupID: lineupId } });
 
       if (!lineup) {
@@ -106,10 +110,10 @@ class LineupService {
 
   async getLineupsBySquad(squadId: number): Promise<Lineup[]> {
     try {
-      const { id: squadIdValidated } = NumeralIdSchema.parse({ id: squadId });
+      const validSquadId = IdSchema.parse(squadId);
 
       const lineups = await Lineup.findAll({
-        where: { SquadID: squadIdValidated },
+        where: { SquadID: validSquadId },
       });
 
       return lineups;

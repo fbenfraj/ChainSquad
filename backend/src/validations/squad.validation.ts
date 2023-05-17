@@ -1,12 +1,13 @@
 import { z } from "zod";
+import { IdSchema, NameSchema } from "./general.validation";
 
 export const SquadValidationSchema = z.object({
-  squadName: z.string().min(1, "Squad Name must not be empty"),
+  squadName: NameSchema,
   description: z.string().optional(),
-  createdBy: z.number().int().nonnegative(),
+  createdBy: IdSchema,
 });
 
 export const UpdateSquadValidationSchema = z.object({
-  squadName: z.string().min(1, "Squad Name must not be empty").optional(),
+  squadName: NameSchema.optional(),
   description: z.string().min(1, "Description must not be empty").optional(),
 });
