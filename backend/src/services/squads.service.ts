@@ -5,6 +5,8 @@ import {
   UpdateSquadValidationSchema,
 } from "../validations/squad.validation";
 import { IdSchema } from "../validations/general.validation";
+import lineupsService from "./lineups.service";
+import { SquadWithLineups } from "../types";
 
 class SquadService {
   async createSquad(
@@ -33,12 +35,16 @@ class SquadService {
     }
   }
 
-  async getSquadById(id: number): Promise<Squad | null> {
+  async getSquadById(squadId: number): Promise<SquadWithLineups> {
     try {
-      const squadId = IdSchema.parse(id);
-      const squad = await Squad.findOne({ where: { SquadID: squadId } });
+      const validSquadId = IdSchema.parse(squadId);
+      const squad = await Squad.findByPk(validSquadId);
+      const lineups = await lineupsService.getLineupsBySquad(validSquadId);
 
-      return squad;
+      return {
+        ...squad?.get(),
+        lineups,
+      };
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errorMessage = error.errors.map((e) => e.message).join(", ");

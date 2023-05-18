@@ -5,6 +5,8 @@ import {
   UpdateLineupSchema,
 } from "../validations/lineup.validation";
 import { IdSchema } from "../validations/general.validation";
+import userlineupService from "./userlineup.service";
+import { LineupWithMembers } from "../types";
 
 class LineupService {
   async createLineup(
@@ -33,12 +35,13 @@ class LineupService {
     }
   }
 
-  async getLineupById(id: number): Promise<Lineup | null> {
+  async getLineupById(id: number): Promise<LineupWithMembers | null> {
     try {
       const lineupId = IdSchema.parse(id);
       const lineup = await Lineup.findOne({ where: { LineupID: lineupId } });
+      const members = await userlineupService.getLineupMembers(lineupId);
 
-      return lineup;
+      return { ...lineup?.get(), members };
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errorMessage = error.errors.map((e) => e.message).join(", ");

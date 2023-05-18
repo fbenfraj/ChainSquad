@@ -1,3 +1,4 @@
+import Lineup from "../models/lineup.model";
 import Squad from "../models/squad.model";
 import User from "../models/user.model";
 
@@ -14,17 +15,22 @@ export enum InvitationStatus {
   Declined = "Declined",
 }
 
-export interface UserWithSquads extends User {
+export interface SanitizedUser extends Omit<User, "PasswordHash"> {}
+
+export interface UserWithSquads extends SanitizedUser {
   squads?: Squad[];
 }
 
-export interface Lineup {
-  lineupID: number;
-  lineupName: string;
-  squadID: number;
-  gameID: number;
-  createdAt: Date;
-  createdBy: number;
+export interface UserWithRole extends SanitizedUser {
+  role: Role;
+}
+
+export interface SquadWithLineups extends Squad {
+  lineups?: Lineup[];
+}
+
+export interface LineupWithMembers extends Lineup {
+  members?: UserWithRole[];
 }
 
 export interface UserSquad {

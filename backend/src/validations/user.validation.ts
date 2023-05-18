@@ -12,3 +12,10 @@ export const UpdateUserValidationSchema = z.object({
   userId: IdSchema,
   fullName: NameSchema.optional(),
 });
+
+export const UserWithRoleSchema = z.array(
+  z.object({
+    userId: IdSchema,
+    role: z.enum(["Coach", "Player"]),
+  })
+);

@@ -33,6 +33,7 @@ export function handleError(
     case "No squads found for the given user":
     case "Lineup not found":
     case "No lineups found for the given squad":
+    case "No members found for the given lineup":
       return res.status(404).json({ error: err.message });
     default:
       console.error(`An unexpected error occured: ${err.message}`);
