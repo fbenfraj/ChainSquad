@@ -11,7 +11,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signUp } from "../services/authenticationApi";
 
 function Copyright(props: any) {
   return (
@@ -34,13 +35,48 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function RegisterPage() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [error, setError] = React.useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    const username = data.get("username") as string;
+    const fullName = data.get("fullName") as string;
+    const email = data.get("email") as string;
+    const password = data.get("password") as string;
+    console.log(username, fullName, email, password);
+
+    if (username.length < 5) {
+      setError("Username must be at least 5 characters long.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+
+    try {
+      setError("");
+
+      const response = await signUp({
+        username,
+        fullName,
+        email,
+        password,
+      });
+
+      if (response.error) {
+        setError(response.error);
+      } else {
+        // TODO: Store cookies in browser
+        navigate("/dashboard/1");
+      }
+    } catch (error) {
+      setError((error as Error).message);
+    }
   };
 
   return (
@@ -68,25 +104,24 @@ export default function RegisterPage() {
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
-                  autoComplete="given-name"
-                  name="firstName"
                   required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
+                  id="username"
+                  label="Username"
+                  name="username"
+                  autoComplete="username"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
+                  id="fullName"
+                  label="Full Name"
+                  name="fullName"
+                  autoComplete="name"
                 />
               </Grid>
               <Grid item xs={12}>
@@ -127,6 +162,7 @@ export default function RegisterPage() {
             >
               Register
             </Button>
+            {error}
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link to="/">Already have an account? Login</Link>

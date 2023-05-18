@@ -34,7 +34,7 @@ export default function CreateSquadPage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     createSquad(squad);
-    navigate("/dashboard");
+    navigate("/dashboard/1");
   };
 
   return (

@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
-type Props = {};
+export default function DashboardPage() {
+  const { userId } = useParams<{ userId: string }>();
 
-export default function DashboardPage({}: Props) {
   return (
     <div>
-      <h1>Welcome, Sybreed!</h1>
+      <h1>Welcome, Sybreed! &#40;id: {userId}&#41;</h1>
       <p>Here's your dashboard.</p>
 
       <h2>My Squads</h2>

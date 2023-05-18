@@ -11,7 +11,8 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signIn } from "../services/authenticationApi";
 
 function Copyright(props: TypographyProps) {
   return (
@@ -34,13 +35,43 @@ function Copyright(props: TypographyProps) {
 const theme = createTheme();
 
 export default function LoginPage() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [error, setError] = React.useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    const username = data.get("username") as string;
+    const password = data.get("password") as string;
+
+    if (username.length < 5) {
+      setError("Username must be at least 5 characters long.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+
+    try {
+      setError("");
+
+      const response = await signIn({
+        username,
+        password,
+      });
+
+      if (response.error) {
+        setError(response.error);
+      } else {
+        // TODO: Store cookies in browser
+        navigate("/dashboard/1");
+      }
+    } catch (error) {
+      setError((error as Error).message);
+    }
   };
 
   return (
@@ -89,10 +120,10 @@ export default function LoginPage() {
                 margin="normal"
                 required
                 fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
                 autoFocus
               />
               <TextField
@@ -109,16 +140,15 @@ export default function LoginPage() {
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
-              <Link to="/dashboard">
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  Login
-                </Button>
-              </Link>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Login
+              </Button>
+              {error}
               <Grid container>
                 <Grid item xs>
                   <Link to="/">Forgot password?</Link>

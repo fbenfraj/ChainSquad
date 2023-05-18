@@ -9,7 +9,9 @@ export function handleError(
   _next: NextFunction
 ) {
   if (err instanceof z.ZodError) {
-    return res.status(400).json({ error: fromZodError(err) });
+    return res.status(400).json({
+      error: fromZodError(err).message,
+    });
   }
 
   if (
@@ -20,7 +22,7 @@ export function handleError(
   }
 
   switch (err.message) {
-    case "Invalid credentials.":
+    case "Invalid credentials":
       return res.status(401).json({ error: err.message });
     case "Username or email already exists":
     case "Invalid refresh token":
@@ -32,6 +34,7 @@ export function handleError(
     case "No lineups found for the given squad":
       return res.status(404).json({ error: err.message });
     default:
+      console.error(`An unexpected error occured: ${err.message}`);
       return res.status(500).json({ error: "An unexpected error occurred." });
   }
 }
