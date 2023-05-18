@@ -1,25 +1,48 @@
 import User from "../models/user.model";
 import { UpdateUserValidationSchema } from "../validations/user.validation";
 import { IdSchema } from "../validations/general.validation";
+import squadsService from "./squads.service";
+import { UserWithSquads } from "../types";
 
 class UserService {
-  async getUserById(userId: number): Promise<User | null> {
+  async getUserById(userId: number): Promise<Partial<UserWithSquads>> {
     try {
       const id = IdSchema.parse(userId);
-      return await User.findByPk(id);
+      const user = await User.findByPk(id);
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const squads = await squadsService.getSquadsByUser(id);
+
+      return {
+        ...this.sanitizeUser(user),
+        squads,
+      };
     } catch (error) {
       throw error;
     }
   }
 
-  async getAllUsers(): Promise<User[]> {
-    return await User.findAll();
+  async getAllUsers(): Promise<Partial<User>[]> {
+    try {
+      const users = await User.findAll();
+
+      if (!users) {
+        throw new Error("No users found");
+      }
+
+      return users.map((user) => this.sanitizeUser(user));
+    } catch (error) {
+      throw error;
+    }
   }
 
   async updateUser(
     userId: number,
     fullName: string | undefined
-  ): Promise<User | null> {
+  ): Promise<Partial<User> | null> {
     try {
       UpdateUserValidationSchema.parse({
         userId,
@@ -31,9 +54,9 @@ class UserService {
         throw new Error("User not found");
       }
 
-      if (fullName) user.FullName = fullName;
+      if (fullName) user!.FullName = fullName;
 
-      await user.save();
+      await user.save?.();
 
       return user;
     } catch (error) {
@@ -44,13 +67,13 @@ class UserService {
   async deleteUser(userId: number): Promise<void> {
     try {
       const id = IdSchema.parse(userId);
-
       const user = await this.getUserById(id);
+
       if (!user) {
         throw new Error("User not found");
       }
 
-      await user.destroy();
+      await user.destroy?.();
     } catch (error) {
       throw error;
     }

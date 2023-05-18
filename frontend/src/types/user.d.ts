@@ -4,6 +4,7 @@ type User = {
   FullName: string;
   Email: string;
   WalletAddress: string;
+  squads: Squad[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;

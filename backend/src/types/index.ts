@@ -1,3 +1,6 @@
+import Squad from "../models/squad.model";
+import User from "../models/user.model";
+
 export enum Role {
   Manager = "Manager",
   Coach = "Coach",
@@ -11,22 +14,8 @@ export enum InvitationStatus {
   Declined = "Declined",
 }
 
-export interface User {
-  userID: number;
-  username: string;
-  fullName: string;
-  email: string;
-  passwordHash: string;
-  role: Role;
-  walletAddress: string;
-}
-
-export interface Squad {
-  squadID: number;
-  squadName: string;
-  description: string;
-  createdAt: Date;
-  createdBy: number;
+export interface UserWithSquads extends User {
+  squads?: Squad[];
 }
 
 export interface Lineup {

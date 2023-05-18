@@ -1,5 +1,11 @@
 type Squad = {
-  name: string;
+  SquadID: number;
+  SquadName: string;
+  Description: string;
+  CreatedBy: number;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 };
 
 type CreateSquadAction = {

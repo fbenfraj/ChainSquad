@@ -28,6 +28,7 @@ export function handleError(
     case "Invalid refresh token":
       return res.status(409).json({ error: err.message });
     case "User not found":
+    case "No users found":
     case "Squad not found":
     case "No squads found for the given user":
     case "Lineup not found":
