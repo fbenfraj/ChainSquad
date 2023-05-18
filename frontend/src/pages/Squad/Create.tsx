@@ -1,40 +1,24 @@
 import { useNavigate } from "react-router-dom";
 import { createSquad } from "../../services/squadApi";
-import { useReducer } from "react";
-
-const initialState = {
-  name: "",
-};
-
-const reducer = (state: Squad, action: CreateSquadAction) => {
-  switch (action.type) {
-    case "field": {
-      return {
-        ...state,
-        [action.fieldName]: action.payload,
-      };
-    }
-    default:
-      return state;
-  }
-};
+import { useState } from "react";
 
 export default function CreateSquadPage() {
-  const [squad, dispatch] = useReducer(reducer, initialState);
+  const [squadName, setSquadName] = useState<string>("");
+
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({
-      type: "field",
-      fieldName: e.target.name,
-      payload: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createSquad(squad);
-    navigate("/dashboard/1");
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) return;
+
+    const squadData = {
+      SquadName: squadName,
+    };
+
+    await createSquad(squadData, parseInt(userId));
+    navigate(`/dashboard/${userId}`);
   };
 
   return (
@@ -45,10 +29,10 @@ export default function CreateSquadPage() {
           type="text"
           name="name"
           placeholder="Name"
-          onChange={handleChange}
-          value={squad.name}
+          onChange={(e) => setSquadName(e.target.value)}
+          value={squadName}
         />
-        <input type="submit" value="Create" />
+        <input type="submit" value="Create" disabled={!squadName} />
       </form>
     </div>
   );

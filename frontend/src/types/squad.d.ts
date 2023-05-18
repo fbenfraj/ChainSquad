@@ -3,6 +3,7 @@ type Squad = {
   SquadName: string;
   Description: string;
   CreatedBy: number;
+  lineups: Lineup[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;

@@ -1,5 +1,6 @@
 type Lineup = {
-  name: string;
+  LineupID: number;
+  LineupName: string;
   game: string;
 };
 

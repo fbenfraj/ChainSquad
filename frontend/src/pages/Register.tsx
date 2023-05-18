@@ -71,6 +71,7 @@ export default function RegisterPage() {
       if (response.error) {
         setError(response.error);
       } else {
+        localStorage.setItem("userId", response.user.UserID.toString());
         localStorage.setItem("accessToken", response.accessToken);
         localStorage.setItem("refreshToken", response.refreshToken);
 
