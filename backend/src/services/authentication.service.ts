@@ -8,6 +8,7 @@ import {
   RefreshTokenValidationSchema,
   SignInValidationSchema,
 } from "../validations/authentication.validation";
+import usersService from "./users.service";
 
 dotenv.config();
 
@@ -27,7 +28,11 @@ class AuthenticationService {
     fullName: string,
     email: string,
     password: string
-  ): Promise<{ user: User; accessToken: string; refreshToken: string }> {
+  ): Promise<{
+    user: Partial<User>;
+    accessToken: string;
+    refreshToken: string;
+  }> {
     try {
       UserValidationSchema.parse({
         username,
@@ -48,8 +53,9 @@ class AuthenticationService {
       await user.save();
 
       const { accessToken, refreshToken } = this.generateTokens(user.UserID);
+      const sanitizedUser = usersService.sanitizeUser(user);
 
-      return { user, accessToken, refreshToken };
+      return { user: sanitizedUser, accessToken, refreshToken };
     } catch (error) {
       if (error instanceof sequelize.UniqueConstraintError) {
         throw new Error("Username or email already exists");
@@ -61,7 +67,11 @@ class AuthenticationService {
   async signIn(
     username: string,
     password: string
-  ): Promise<{ user: User; accessToken: string; refreshToken: string }> {
+  ): Promise<{
+    user: Partial<User>;
+    accessToken: string;
+    refreshToken: string;
+  }> {
     try {
       const { username: validUsername, password: validPassword } =
         SignInValidationSchema.parse({
@@ -85,8 +95,9 @@ class AuthenticationService {
       }
 
       const { accessToken, refreshToken } = this.generateTokens(user.UserID);
+      const sanitizedUser = usersService.sanitizeUser(user);
 
-      return { user, accessToken, refreshToken };
+      return { user: sanitizedUser, accessToken, refreshToken };
     } catch (error) {
       throw error;
     }

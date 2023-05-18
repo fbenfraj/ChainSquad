@@ -71,8 +71,10 @@ export default function RegisterPage() {
       if (response.error) {
         setError(response.error);
       } else {
-        // TODO: Store cookies in browser
-        navigate("/dashboard/1");
+        localStorage.setItem("accessToken", response.accessToken);
+        localStorage.setItem("refreshToken", response.refreshToken);
+
+        navigate(`/dashboard/${response.user.UserID}`);
       }
     } catch (error) {
       setError((error as Error).message);

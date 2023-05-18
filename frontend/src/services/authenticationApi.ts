@@ -13,8 +13,9 @@ type SignUpData = UserCredentials & {
 };
 
 type AuthResponse = {
-  accessToken?: string;
-  refreshToken?: string;
+  user: User;
+  accessToken: string;
+  refreshToken: string;
   error?: string;
 };
 

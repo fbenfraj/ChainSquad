@@ -55,6 +55,12 @@ class UserService {
       throw error;
     }
   }
+
+  sanitizeUser(user: User): Partial<User> {
+    const sanitizedUser = user.toJSON() as User;
+    delete sanitizedUser.PasswordHash;
+    return sanitizedUser;
+  }
 }
 
 export default new UserService();
