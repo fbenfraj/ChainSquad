@@ -27,7 +27,7 @@ class AuthenticationService {
     fullName: string,
     email: string,
     password: string
-  ): Promise<User> {
+  ): Promise<{ user: User; accessToken: string; refreshToken: string }> {
     try {
       UserValidationSchema.parse({
         username,
@@ -47,7 +47,9 @@ class AuthenticationService {
 
       await user.save();
 
-      return user;
+      const { accessToken, refreshToken } = this.generateTokens(user.UserID);
+
+      return { user, accessToken, refreshToken };
     } catch (error) {
       if (error instanceof sequelize.UniqueConstraintError) {
         throw new Error("Username or email already exists");
@@ -59,7 +61,7 @@ class AuthenticationService {
   async signIn(
     username: string,
     password: string
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<{ user: User; accessToken: string; refreshToken: string }> {
     try {
       const { username: validUsername, password: validPassword } =
         SignInValidationSchema.parse({
@@ -82,15 +84,24 @@ class AuthenticationService {
         throw new Error("Invalid credentials");
       }
 
-      const accessToken = jwt.sign({ UserID: user.UserID }, secretKey, {
-        expiresIn,
-      });
-      const refreshToken = this.generateRefreshToken(user.UserID);
+      const { accessToken, refreshToken } = this.generateTokens(user.UserID);
 
-      return { accessToken, refreshToken };
+      return { user, accessToken, refreshToken };
     } catch (error) {
       throw error;
     }
+  }
+
+  generateTokens(userId: number): {
+    accessToken: string;
+    refreshToken: string;
+  } {
+    const accessToken = jwt.sign({ UserID: userId }, secretKey, {
+      expiresIn,
+    });
+    const refreshToken = this.generateRefreshToken(userId);
+
+    return { accessToken, refreshToken };
   }
 
   generateRefreshToken(userId: number): string {
