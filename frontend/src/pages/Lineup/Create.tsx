@@ -1,43 +1,24 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { createLineup } from "../../services/lineupApi";
-import { useReducer } from "react";
-
-const initialState = {
-  name: "",
-  game: "",
-};
-
-const reducer = (state: Lineup, action: CreateLineupAction) => {
-  switch (action.type) {
-    case "field": {
-      return {
-        ...state,
-        [action.fieldName]: action.payload,
-      };
-    }
-    default:
-      return state;
-  }
-};
+import { useState } from "react";
 
 export default function CreateLineupPage() {
-  const [lineup, dispatch] = useReducer(reducer, initialState);
   const { squadId } = useParams<{ squadId: string }>();
+  const [lineupName, setLineupName] = useState("");
+  const [lineupGame, setLineupGame] = useState("");
   const navigate = useNavigate();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    dispatch({
-      type: "field",
-      fieldName: e.target.name,
-      payload: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createLineup(lineup);
+
+    if (!squadId) return;
+
+    const lineupData = {
+      LineupName: lineupName,
+      LineupGame: lineupGame,
+    };
+
+    await createLineup(lineupData, parseInt(squadId));
     navigate(`/squads/${squadId}`);
   };
 
@@ -49,10 +30,10 @@ export default function CreateLineupPage() {
           type="text"
           name="name"
           placeholder="Name"
-          onChange={handleChange}
-          value={lineup.name}
+          onChange={(e) => setLineupName(e.target.value)}
+          value={lineupName}
         />
-        <select name="game" onChange={handleChange}>
+        <select name="game" onChange={(e) => setLineupGame(e.target.value)}>
           <option value="CSGO">CSGO</option>
           <option value="VALORANT">VALORANT</option>
           <option value="DOTA2">DOTA2</option>

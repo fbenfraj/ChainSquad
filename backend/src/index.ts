@@ -27,8 +27,13 @@ app.use("/lineups", lineupsRoutes);
 
 app.use(handleError);
 
-sequelize.sync().then(() =>
-  app.listen(port, () => {
-    console.log(`ChainSquad server is running on port ${port}!`);
-  })
-);
+sequelize
+  .sync()
+  .then(() =>
+    app.listen(port, () => {
+      console.log(`ChainSquad server is running on port ${port}!`);
+    })
+  )
+  .catch((error) => {
+    console.error("Unable to connect to the database:", error);
+  });

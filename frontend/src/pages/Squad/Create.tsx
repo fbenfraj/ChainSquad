@@ -7,9 +7,10 @@ export default function CreateSquadPage() {
 
   const navigate = useNavigate();
 
+  const userId = localStorage.getItem("userId");
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const userId = localStorage.getItem("userId");
 
     if (!userId) return;
 
