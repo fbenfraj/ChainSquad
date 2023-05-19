@@ -17,6 +17,6 @@ export const UpdateUserValidationSchema = z.object({
 export const UserWithRoleSchema = z.array(
   z.object({
     userId: IdSchema,
-    role: z.enum(["Coach", "Player"]),
+    role: z.enum(["Manager", "Player", "Coach", "Other"]),
   })
 );

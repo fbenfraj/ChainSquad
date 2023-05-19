@@ -23,7 +23,7 @@ export default class UserLineup extends BaseModel {
   @Column
   lineupId!: number;
 
-  @Column(DataType.ENUM("Player", "Coach"))
+  @Column(DataType.ENUM("Manager", "Player", "Coach", "Other"))
   role!: Role;
 
   @BelongsTo(() => User)

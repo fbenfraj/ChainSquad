@@ -23,9 +23,6 @@ export default class UserSquad extends BaseModel {
   @Column
   squadId!: number;
 
-  @Column(DataType.ENUM("Manager", "Coach", "Player", "Other"))
-  role!: Role;
-
   @BelongsTo(() => User)
   user!: User;
 
