@@ -1,5 +1,4 @@
 import Lineup from "../models/lineup.model";
-import Squad from "../models/squad.model";
 import User from "../models/user.model";
 
 export enum Role {
@@ -50,4 +49,10 @@ export interface Invitation {
   email: string;
   createdAt: Date;
   status: InvitationStatus;
+}
+
+export interface UserUpdateParams {
+  username?: string;
+  email?: string;
+  walletAddress?: string;
 }

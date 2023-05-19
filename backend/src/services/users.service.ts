@@ -2,6 +2,7 @@ import User from "../models/user.model";
 import { UpdateUserValidationSchema } from "../validations/user.validation";
 import { IdSchema } from "../validations/general.validation";
 import squadsService from "./squads.service";
+import { UserUpdateParams } from "../types";
 
 class UserService {
   async getUserById(userId: number): Promise<Partial<User>> {
@@ -38,15 +39,31 @@ class UserService {
     }
   }
 
-  async updateUser(userId: number): Promise<Partial<User> | null> {
+  async updateUser(
+    userId: number,
+    updates: UserUpdateParams
+  ): Promise<Partial<User> | null> {
     try {
       UpdateUserValidationSchema.parse({
         userId,
+        ...updates,
       });
 
       const user = await this.getUserById(userId);
       if (!user) {
         throw new Error("User not found");
+      }
+
+      if (updates.username) {
+        user.username = updates.username;
+      }
+
+      if (updates.email) {
+        user.email = updates.email;
+      }
+
+      if (updates.walletAddress) {
+        user.walletAddress = updates.walletAddress;
       }
 
       await user.save?.();

@@ -9,6 +9,9 @@ export const UserValidationSchema = z.object({
 
 export const UpdateUserValidationSchema = z.object({
   userId: IdSchema,
+  username: NameSchema.optional(),
+  email: z.string().email("Must be a valid email address").optional(),
+  walletAddress: z.string().optional(),
 });
 
 export const UserWithRoleSchema = z.array(

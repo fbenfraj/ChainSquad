@@ -1,10 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 import LineupService from "../services/lineups.service";
 import userlineupService from "../services/userlineup.service";
+import { authenticateToken } from "../auth";
 
 const router = express.Router();
 
-router.post("/", async (req: Request, res: Response, next: NextFunction) => {
+router.post("/", authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { lineupName, squadId, createdBy } = req.body;
 
@@ -20,7 +21,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
+router.get("/:id", authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
@@ -37,7 +38,7 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-router.get("/", async (req: Request, res: Response, next: NextFunction) => {
+router.get("/", authenticateToken, async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const lineups = await LineupService.getAllLineups();
 
@@ -47,7 +48,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-router.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
+router.put("/:id", authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const { lineupName, squadId } = req.body;
@@ -69,7 +70,7 @@ router.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.delete(
-  "/:id",
+  "/:id", authenticateToken,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
@@ -89,7 +90,7 @@ router.delete(
 );
 
 router.get(
-  "/squad/:squadId",
+  "/squad/:squadId", authenticateToken,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { squadId } = req.params;
@@ -109,7 +110,7 @@ router.get(
 );
 
 router.post(
-  "/:lineupId/add",
+  "/:lineupId/add", authenticateToken,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { lineupId } = req.params;
