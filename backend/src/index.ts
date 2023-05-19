@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { sequelize } from "./database";
 import authenticationRoutes from "./controllers/authentication.controller";
 import usersRoutes from "./controllers/users.controller";
+import profileRoutes from "./controllers/profile.controller";
 import squadsRoutes from "./controllers/squads.controller";
 import lineupsRoutes from "./controllers/lineups.controller";
 import { handleError } from "./errors";
@@ -22,6 +23,7 @@ app.use(cors());
 
 app.use("/auth", authenticationRoutes);
 app.use("/users", usersRoutes);
+app.use("/profile", profileRoutes);
 app.use("/squads", squadsRoutes);
 app.use("/lineups", lineupsRoutes);
 
