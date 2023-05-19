@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getUser } from "../services/userApi";
+import { getProfile } from "../services/profileApi";
 
 export default function DashboardPage() {
   const { userId } = useParams<{ userId: string }>();
@@ -8,14 +8,10 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!userId) return;
-
-    const parsedUserId = parseInt(userId);
-
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await getUser(parsedUserId);
+        const response = await getProfile();
         setUser(response);
       } catch (error) {
         console.error(error);
@@ -25,7 +21,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, [userId]);
+  }, []);
 
   if (isLoading) {
     return <p>Loading...</p>;

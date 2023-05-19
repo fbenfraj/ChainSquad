@@ -1,10 +1,12 @@
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/lineups`;
+const ACCESS_TOKEN = localStorage.getItem("accessToken");
 
 export async function getLineup(lineupId: number): Promise<Lineup> {
   const response = await fetch(`${API_URL}/${lineupId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${ACCESS_TOKEN}`,
     },
   });
 
@@ -33,6 +35,7 @@ export async function createLineup(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${ACCESS_TOKEN}`,
     },
     body: JSON.stringify(data),
   });
