@@ -26,6 +26,9 @@ export default class Lineup extends BaseModel {
   @Column(DataType.STRING)
   LineupName!: string;
 
+  @Column(DataType.STRING)
+  LineupGame!: string;
+
   @ForeignKey(() => Squad)
   @Column
   SquadID!: number;
