@@ -37,11 +37,11 @@ export default function ViewLineupPage() {
 
   return (
     <div>
-      <p>Lineup {lineupId}</p>
-      <p>Lineup Name: {lineup?.lineupName}</p>
       {lineup?.members && lineup?.members?.length > 0 ? (
         <div>
-          <h2>My Squads</h2>
+          <h1>lineupName: {lineup?.lineupName}</h1>
+          <h2>lineupId: {lineupId}</h2>
+          <h3>Members:</h3>
           <ul>
             {lineup.members.map((member) => (
               <li>{member.role}</li>

@@ -8,6 +8,8 @@ export default function ViewSquadPage() {
   const [squad, setSquad] = useState<Squad | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const userId = localStorage.getItem("userId");
+
   useEffect(() => {
     if (!squadId) return;
 
@@ -34,11 +36,11 @@ export default function ViewSquadPage() {
 
   return (
     <div>
-      <p>Squad {squadId} lineups: </p>
-      <h2>Lineups</h2>
       {squad?.lineups && squad?.lineups?.length > 0 ? (
         <div>
-          <h2>My Squads</h2>
+          <h1>squadName: {squad?.squadName}</h1>
+          <h2>squadId: {squad.squadId}</h2>
+          <h3>Lineups:</h3>
           <ul>
             {squad.lineups.map((lineup) => (
               <Link
@@ -56,7 +58,7 @@ export default function ViewSquadPage() {
       <Link to={`/squads/${squadId}/lineups/create`}>
         <button>Add lineup</button>
       </Link>
-      <Link to={`/dashboard`}>
+      <Link to={`/dashboard/${userId}`}>
         <button>Go back to Dashboard</button>
       </Link>
     </div>
