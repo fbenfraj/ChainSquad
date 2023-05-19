@@ -41,8 +41,8 @@ export default function ViewSquadPage() {
           <h2>My Squads</h2>
           <ul>
             {squad.lineups.map((lineup) => (
-              <Link key={lineup.LineupID} to={`/lineups/${lineup.LineupID}`}>
-                <li>{lineup.LineupName}</li>
+              <Link key={lineup.lineupId} to={`/lineups/${lineup.lineupId}`}>
+                <li>{lineup.lineupName}</li>
               </Link>
             ))}
           </ul>

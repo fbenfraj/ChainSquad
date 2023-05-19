@@ -2,10 +2,9 @@ import User from "../models/user.model";
 import { UpdateUserValidationSchema } from "../validations/user.validation";
 import { IdSchema } from "../validations/general.validation";
 import squadsService from "./squads.service";
-import { UserWithSquads } from "../types";
 
 class UserService {
-  async getUserById(userId: number): Promise<Partial<UserWithSquads>> {
+  async getUserById(userId: number): Promise<Partial<User>> {
     try {
       const id = IdSchema.parse(userId);
       const user = await User.findByPk(id);
@@ -39,22 +38,16 @@ class UserService {
     }
   }
 
-  async updateUser(
-    userId: number,
-    fullName: string | undefined
-  ): Promise<Partial<User> | null> {
+  async updateUser(userId: number): Promise<Partial<User> | null> {
     try {
       UpdateUserValidationSchema.parse({
         userId,
-        fullName,
       });
 
       const user = await this.getUserById(userId);
       if (!user) {
         throw new Error("User not found");
       }
-
-      if (fullName) user!.FullName = fullName;
 
       await user.save?.();
 
@@ -81,7 +74,7 @@ class UserService {
 
   sanitizeUser(user: User): Partial<User> {
     const sanitizedUser = user.toJSON() as User;
-    delete sanitizedUser.PasswordHash;
+    delete sanitizedUser.passwordHash;
     return sanitizedUser;
   }
 }

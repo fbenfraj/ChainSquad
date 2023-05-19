@@ -34,7 +34,7 @@ export default function DashboardPage() {
   return (
     <div>
       <h1>
-        Welcome, {user?.Username} ! &#40;id: {userId}&#41;
+        Welcome, {user?.username} ! &#40;id: {userId}&#41;
       </h1>
       <p>Here's your dashboard.</p>
       {user?.squads && user?.squads?.length > 0 ? (
@@ -42,8 +42,8 @@ export default function DashboardPage() {
           <h2>My Squads</h2>
           <ul>
             {user.squads.map((squad) => (
-              <Link key={squad.SquadID} to={`/squads/${squad.SquadID}`}>
-                <li>{squad.SquadName}</li>
+              <Link key={squad.squadId} to={`/squads/${squad.squadId}`}>
+                <li>{squad.squadName}</li>
               </Link>
             ))}
           </ul>

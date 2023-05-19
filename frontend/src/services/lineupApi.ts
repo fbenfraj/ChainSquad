@@ -9,7 +9,7 @@ export async function createLineup(
   if (!userId) return;
 
   const data = {
-    lineupName: lineup.LineupName,
+    lineupName: lineup.lineupName,
     squadId: squadId,
     createdBy: parseInt(userId),
   };

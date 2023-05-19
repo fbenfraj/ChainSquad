@@ -1,7 +1,7 @@
 type Lineup = {
-  LineupID: number;
-  LineupName: string;
-  LineupGame: string;
+  lineupId: number;
+  lineupName: string;
+  lineupGame: string;
 };
 
 type CreateLineupAction = {

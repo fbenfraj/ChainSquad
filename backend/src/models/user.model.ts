@@ -20,31 +20,28 @@ export default class User extends BaseModel {
   @PrimaryKey
   @AutoIncrement
   @Column
-  UserID!: number;
+  userId!: number;
 
   @Unique
   @Column(DataType.STRING)
-  Username!: string;
-
-  @Column(DataType.STRING)
-  FullName: string | undefined;
+  username!: string;
 
   @Unique
   @Column(DataType.STRING)
-  Email: string | undefined;
+  email: string | undefined;
 
   @Column(DataType.STRING)
-  PasswordHash: string | undefined;
+  passwordHash: string | undefined;
 
   @Column(DataType.STRING)
-  WalletAddress: string | undefined;
+  walletAddress: string | undefined;
 
-  @HasMany(() => Squad, "CreatedBy")
-  Squads: Squad[] | undefined;
+  @HasMany(() => Squad, "createdBy")
+  squads: Squad[] | undefined;
 
-  @HasMany(() => UserSquad, "UserID")
-  UserSquads: UserSquad[] | undefined;
+  @HasMany(() => UserSquad, "userId")
+  userSquads: UserSquad[] | undefined;
 
-  @HasMany(() => UserLineup, "UserID")
-  UserLineups: UserLineup[] | undefined;
+  @HasMany(() => UserLineup, "userId")
+  userLineups: UserLineup[] | undefined;
 }

@@ -6,7 +6,6 @@ import {
 } from "../validations/squad.validation";
 import { IdSchema } from "../validations/general.validation";
 import lineupsService from "./lineups.service";
-import { SquadWithLineups } from "../types";
 
 class SquadService {
   async createSquad(
@@ -22,9 +21,9 @@ class SquadService {
       });
 
       const squad = new Squad({
-        SquadName: squadName,
-        Description: description,
-        CreatedBy: createdBy,
+        squadName: squadName,
+        description,
+        createdBy,
       });
 
       await squad.save();
@@ -35,7 +34,7 @@ class SquadService {
     }
   }
 
-  async getSquadById(squadId: number): Promise<SquadWithLineups> {
+  async getSquadById(squadId: number): Promise<Squad> {
     try {
       const validSquadId = IdSchema.parse(squadId);
       const squad = await Squad.findByPk(validSquadId);
@@ -67,18 +66,18 @@ class SquadService {
       const squadId = IdSchema.parse(id);
       UpdateSquadValidationSchema.parse(updateFields);
 
-      const squad = await Squad.findOne({ where: { SquadID: squadId } });
+      const squad = await Squad.findOne({ where: { squadId } });
 
       if (!squad) {
         return null;
       }
 
       if (updateFields.squadName) {
-        squad.SquadName = updateFields.squadName;
+        squad.squadName = updateFields.squadName;
       }
 
       if (updateFields.description) {
-        squad.Description = updateFields.description;
+        squad.description = updateFields.description;
       }
 
       await squad.save();
@@ -113,7 +112,7 @@ class SquadService {
   async getSquadsByUser(userId: number): Promise<Squad[]> {
     try {
       const validUserId = IdSchema.parse(userId);
-      const squads = await Squad.findAll({ where: { CreatedBy: validUserId } });
+      const squads = await Squad.findAll({ where: { createdBy: validUserId } });
 
       return squads;
     } catch (error) {

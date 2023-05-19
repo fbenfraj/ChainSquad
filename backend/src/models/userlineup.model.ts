@@ -17,18 +17,18 @@ import { Role } from "../types";
 export default class UserLineup extends BaseModel {
   @ForeignKey(() => User)
   @Column
-  UserID!: number;
+  userId!: number;
 
   @ForeignKey(() => Lineup)
   @Column
-  LineupID!: number;
+  lineupId!: number;
 
   @Column(DataType.ENUM("Player", "Coach"))
-  Role!: Role;
+  role!: Role;
 
   @BelongsTo(() => User)
-  User!: User;
+  user!: User;
 
   @BelongsTo(() => Lineup)
-  Lineup!: Lineup;
+  lineup!: Lineup;
 }

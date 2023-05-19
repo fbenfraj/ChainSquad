@@ -7,10 +7,9 @@ router.post(
   "/signup",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { username, fullName, email, password } = req.body;
+      const { username, email, password } = req.body;
       const newUser = await AuthenticationService.signUp(
         username,
-        fullName,
         email,
         password
       );

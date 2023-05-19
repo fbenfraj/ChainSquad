@@ -22,9 +22,9 @@ class LineupService {
       });
 
       const lineup = new Lineup({
-        LineupName: lineupName,
-        SquadID: squadId,
-        CreatedBy: createdBy,
+        lineupName,
+        squadId: squadId,
+        createdBy: createdBy,
       });
 
       await lineup.save();
@@ -38,7 +38,7 @@ class LineupService {
   async getLineupById(id: number): Promise<LineupWithMembers | null> {
     try {
       const lineupId = IdSchema.parse(id);
-      const lineup = await Lineup.findOne({ where: { LineupID: lineupId } });
+      const lineup = await Lineup.findOne({ where: { lineupId } });
       const members = await userlineupService.getLineupMembers(lineupId);
 
       return { ...lineup?.get(), members };
@@ -68,18 +68,18 @@ class LineupService {
       const lineupId = IdSchema.parse(id);
       UpdateLineupSchema.parse(updateFields);
 
-      const lineup = await Lineup.findOne({ where: { LineupID: lineupId } });
+      const lineup = await Lineup.findOne({ where: { lineupId } });
 
       if (!lineup) {
         return null;
       }
 
       if (updateFields.lineupName) {
-        lineup.LineupName = updateFields.lineupName;
+        lineup.lineupName = updateFields.lineupName;
       }
 
       if (updateFields.squadId) {
-        lineup.SquadID = updateFields.squadId;
+        lineup.squadId = updateFields.squadId;
       }
 
       await lineup.save();
@@ -93,7 +93,7 @@ class LineupService {
   async deleteLineup(id: number): Promise<boolean> {
     try {
       const lineupId = IdSchema.parse(id);
-      const lineup = await Lineup.findOne({ where: { LineupID: lineupId } });
+      const lineup = await Lineup.findOne({ where: { lineupId } });
 
       if (!lineup) {
         return false;
@@ -116,7 +116,7 @@ class LineupService {
       const validSquadId = IdSchema.parse(squadId);
 
       const lineups = await Lineup.findAll({
-        where: { SquadID: validSquadId },
+        where: { squadId: validSquadId },
       });
 
       return lineups;

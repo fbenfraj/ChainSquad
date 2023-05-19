@@ -21,28 +21,28 @@ export default class Lineup extends BaseModel {
   @PrimaryKey
   @AutoIncrement
   @Column
-  LineupID!: number;
+  lineupId!: number;
 
   @Column(DataType.STRING)
-  LineupName!: string;
+  lineupName!: string;
 
   @Column(DataType.STRING)
-  LineupGame!: string;
+  lineupGame!: string;
 
   @ForeignKey(() => Squad)
   @Column
-  SquadID!: number;
+  squadId!: number;
 
   @ForeignKey(() => User)
   @Column
-  CreatedBy!: number;
+  createdBy!: number;
 
   @BelongsTo(() => Squad)
-  Squad!: Squad;
+  squad!: Squad;
 
   @BelongsTo(() => User)
-  User!: User;
+  user!: User;
 
-  @HasMany(() => UserLineup, "LineupID")
-  UserLineups: UserLineup[] | undefined;
+  @HasMany(() => UserLineup, "lineupId")
+  userLineups: UserLineup[] | undefined;
 }

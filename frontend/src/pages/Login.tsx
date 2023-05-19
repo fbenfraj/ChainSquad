@@ -66,11 +66,11 @@ export default function LoginPage() {
       if (response.error) {
         setError(response.error);
       } else {
-        localStorage.setItem("userId", response.user.UserID.toString());
+        localStorage.setItem("userId", response.user.userId.toString());
         localStorage.setItem("accessToken", response.accessToken);
         localStorage.setItem("refreshToken", response.refreshToken);
 
-        navigate(`/dashboard/${response.user.UserID}`);
+        navigate(`/dashboard/${response.user.userId}`);
       }
     } catch (error) {
       setError((error as Error).message);

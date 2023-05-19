@@ -29,8 +29,7 @@ router.get("/", async (_req: Request, res: Response, next: NextFunction) => {
 router.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = parseInt(req.params.id);
-    const { fullName } = req.body;
-    const user = await UserService.updateUser(userId, fullName);
+    const user = await UserService.updateUser(userId);
     if (user) {
       res.json(user);
     } else {

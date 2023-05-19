@@ -14,9 +14,9 @@ class UserLineupService {
 
     const userLineups = validUsers.map((user) => {
       return {
-        UserID: user.userId,
-        LineupID: validLineupId,
-        Role: user.role,
+        userId: user.userId,
+        lineupId: validLineupId,
+        role: user.role,
       };
     });
 
@@ -25,14 +25,14 @@ class UserLineupService {
 
   async getLineupMembers(lineupId: number): Promise<UserWithRole[]> {
     const userLineups = await UserLineup.findAll({
-      where: { LineupID: lineupId },
+      where: { lineupId },
       include: [User],
-      attributes: { exclude: ["PasswordHash"] },
+      attributes: { exclude: ["passwordHash"] },
     });
 
     const users = userLineups.map((userLineup) => ({
-      ...userLineup.User.get(),
-      role: userLineup.Role,
+      ...userLineup.user.get(),
+      role: userLineup.role,
     }));
 
     return users;

@@ -1,8 +1,8 @@
 type Squad = {
-  SquadID: number;
-  SquadName: string;
-  Description: string;
-  CreatedBy: number;
+  squadId: number;
+  squadName: string;
+  description: string;
+  createdBy: number;
   lineups: Lineup[];
   createdAt: Date;
   updatedAt: Date;

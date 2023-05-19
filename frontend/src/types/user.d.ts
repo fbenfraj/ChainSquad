@@ -1,9 +1,8 @@
 type User = {
-  UserID: number;
-  Username: string;
-  FullName: string;
-  Email: string;
-  WalletAddress: string;
+  userId: number;
+  username: string;
+  email: string;
+  walletAddress: string;
   squads: Squad[];
   createdAt: Date;
   updatedAt: Date;

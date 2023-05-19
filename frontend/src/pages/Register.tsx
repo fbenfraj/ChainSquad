@@ -43,10 +43,8 @@ export default function RegisterPage() {
     const data = new FormData(event.currentTarget);
 
     const username = data.get("username") as string;
-    const fullName = data.get("fullName") as string;
     const email = data.get("email") as string;
     const password = data.get("password") as string;
-    console.log(username, fullName, email, password);
 
     if (username.length < 5) {
       setError("Username must be at least 5 characters long.");
@@ -63,7 +61,6 @@ export default function RegisterPage() {
 
       const response = await signUp({
         username,
-        fullName,
         email,
         password,
       });
@@ -71,11 +68,11 @@ export default function RegisterPage() {
       if (response.error) {
         setError(response.error);
       } else {
-        localStorage.setItem("userId", response.user.UserID.toString());
+        localStorage.setItem("userId", response.user.userId.toString());
         localStorage.setItem("accessToken", response.accessToken);
         localStorage.setItem("refreshToken", response.refreshToken);
 
-        navigate(`/dashboard/${response.user.UserID}`);
+        navigate(`/dashboard/${response.user.userId}`);
       }
     } catch (error) {
       setError((error as Error).message);
@@ -115,16 +112,6 @@ export default function RegisterPage() {
                   label="Username"
                   name="username"
                   autoComplete="username"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="fullName"
-                  label="Full Name"
-                  name="fullName"
-                  autoComplete="name"
                 />
               </Grid>
               <Grid item xs={12}>

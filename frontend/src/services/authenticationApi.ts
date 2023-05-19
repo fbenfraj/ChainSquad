@@ -7,7 +7,6 @@ type UserCredentials = {
 
 type SignUpData = UserCredentials & {
   username: string;
-  fullName: string;
   email: string;
   password: string;
 };

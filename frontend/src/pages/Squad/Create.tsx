@@ -15,7 +15,7 @@ export default function CreateSquadPage() {
     if (!userId) return;
 
     const squadData = {
-      SquadName: squadName,
+      squadName,
     };
 
     await createSquad(squadData, parseInt(userId));

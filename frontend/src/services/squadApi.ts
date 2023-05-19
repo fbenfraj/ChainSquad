@@ -20,7 +20,7 @@ export async function createSquad(
   userId: number
 ): Promise<Squad> {
   const data = {
-    squadName: squad.SquadName,
+    squadName: squad.squadName,
     createdBy: userId,
   };
   

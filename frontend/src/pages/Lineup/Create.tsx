@@ -14,8 +14,8 @@ export default function CreateLineupPage() {
     if (!squadId) return;
 
     const lineupData = {
-      LineupName: lineupName,
-      LineupGame: lineupGame,
+      lineupName,
+      lineupGame,
     };
 
     await createLineup(lineupData, parseInt(squadId));

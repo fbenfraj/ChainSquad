@@ -25,7 +25,6 @@ if (!secretKey || !refreshSecret) {
 class AuthenticationService {
   async signUp(
     username: string,
-    fullName: string,
     email: string,
     password: string
   ): Promise<{
@@ -36,7 +35,6 @@ class AuthenticationService {
     try {
       UserValidationSchema.parse({
         username,
-        fullName,
         email,
         password,
       });
@@ -44,15 +42,14 @@ class AuthenticationService {
       const passwordHash = await bcrypt.hash(password, 10);
 
       const user = new User({
-        Username: username,
-        FullName: fullName,
-        Email: email,
-        PasswordHash: passwordHash,
+        username,
+        email,
+        passwordHash,
       });
 
       await user.save();
 
-      const { accessToken, refreshToken } = this.generateTokens(user.UserID);
+      const { accessToken, refreshToken } = this.generateTokens(user.userId);
       const sanitizedUser = usersService.sanitizeUser(user);
 
       return { user: sanitizedUser, accessToken, refreshToken };
@@ -79,7 +76,7 @@ class AuthenticationService {
           password,
         });
 
-      const user = await User.findOne({ where: { Username: validUsername } });
+      const user = await User.findOne({ where: { username: validUsername } });
 
       if (!user) {
         throw new Error("Invalid credentials");
@@ -87,14 +84,14 @@ class AuthenticationService {
 
       const valid = await bcrypt.compare(
         validPassword,
-        user.PasswordHash || ""
+        user.passwordHash || ""
       );
 
       if (!valid) {
         throw new Error("Invalid credentials");
       }
 
-      const { accessToken, refreshToken } = this.generateTokens(user.UserID);
+      const { accessToken, refreshToken } = this.generateTokens(user.userId);
       const sanitizedUser = usersService.sanitizeUser(user);
 
       return { user: sanitizedUser, accessToken, refreshToken };
@@ -107,7 +104,7 @@ class AuthenticationService {
     accessToken: string;
     refreshToken: string;
   } {
-    const accessToken = jwt.sign({ UserID: userId }, secretKey, {
+    const accessToken = jwt.sign({ userId }, secretKey, {
       expiresIn,
     });
     const refreshToken = this.generateRefreshToken(userId);
@@ -116,7 +113,7 @@ class AuthenticationService {
   }
 
   generateRefreshToken(userId: number): string {
-    const refreshToken = jwt.sign({ UserID: userId }, refreshSecret as string, {
+    const refreshToken = jwt.sign({ userId }, refreshSecret as string, {
       expiresIn: "7d", // 1 week
     });
 
@@ -132,12 +129,12 @@ class AuthenticationService {
       });
 
       const decoded = jwt.verify(refreshToken, refreshSecret as string);
-      userId = (decoded as any).UserID;
+      userId = (decoded as any).userId;
     } catch (error) {
       throw new Error("Invalid refresh token");
     }
 
-    const accessToken = jwt.sign({ UserID: userId }, secretKey, { expiresIn });
+    const accessToken = jwt.sign({ userId }, secretKey, { expiresIn });
 
     return accessToken;
   }

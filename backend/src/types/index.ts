@@ -15,18 +15,10 @@ export enum InvitationStatus {
   Declined = "Declined",
 }
 
-export interface SanitizedUser extends Omit<User, "PasswordHash"> {}
-
-export interface UserWithSquads extends SanitizedUser {
-  squads?: Squad[];
-}
+export interface SanitizedUser extends Omit<User, "passwordHash"> {}
 
 export interface UserWithRole extends SanitizedUser {
   role: Role;
-}
-
-export interface SquadWithLineups extends Squad {
-  lineups?: Lineup[];
 }
 
 export interface LineupWithMembers extends Lineup {
@@ -34,13 +26,13 @@ export interface LineupWithMembers extends Lineup {
 }
 
 export interface UserSquad {
-  userSquadID: number;
+  userSquadId: number;
   userID: number;
   squadID: number;
 }
 
 export interface UserLineup {
-  userLineupID: number;
+  userLineupId: number;
   userID: number;
   lineupID: number;
 }

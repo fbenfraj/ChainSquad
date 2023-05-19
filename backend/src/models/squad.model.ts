@@ -21,24 +21,24 @@ export default class Squad extends BaseModel {
   @PrimaryKey
   @AutoIncrement
   @Column
-  SquadID!: number;
+  squadId!: number;
 
   @Column(DataType.STRING)
-  SquadName!: string;
+  squadName!: string;
 
   @Column(DataType.TEXT)
-  Description: string | undefined;
+  description: string | undefined;
 
   @ForeignKey(() => User)
   @Column
-  CreatedBy!: number;
+  createdBy!: number;
 
   @BelongsTo(() => User)
-  User!: User;
+  user!: User;
 
-  @HasMany(() => Lineup, "SquadID")
-  Lineups: Lineup[] | undefined;
+  @HasMany(() => Lineup, "squadId")
+  lineups: Lineup[] | undefined;
 
-  @HasMany(() => UserSquad, "SquadID")
-  UserSquads: UserSquad[] | undefined;
+  @HasMany(() => UserSquad, "squadId")
+  userSquads: UserSquad[] | undefined;
 }
