@@ -2,6 +2,7 @@ type Lineup = {
   lineupId: number;
   lineupName: string;
   lineupGame: string;
+  members: Member[];
 };
 
 type CreateLineupAction = {

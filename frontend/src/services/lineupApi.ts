@@ -1,5 +1,20 @@
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/lineups`;
 
+export async function getLineup(lineupId: number): Promise<Lineup> {
+  const response = await fetch(`${API_URL}/${lineupId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Lineup not found");
+  }
+
+  return await response.json();
+}
+
 export async function createLineup(
   lineup: Partial<Lineup>,
   squadId: number
