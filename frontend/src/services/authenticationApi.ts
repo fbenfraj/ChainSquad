@@ -54,6 +54,12 @@ export async function signIn(data: UserCredentials): Promise<AuthResponse> {
   return responseData;
 }
 
+export function logout() {
+  localStorage.removeItem("userId");
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+}
+
 export async function refresh(refreshToken: string): Promise<AuthResponse> {
   const response = await fetch(`${API_URL}/refresh`, {
     method: "POST",

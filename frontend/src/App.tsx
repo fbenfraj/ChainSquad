@@ -6,45 +6,35 @@ import CreateSquadPage from "./pages/Squad/Create";
 import ViewSquadPage from "./pages/Squad/View";
 import ViewLineupPage from "./pages/Lineup/View";
 import CreateLineupPage from "./pages/Lineup/Create";
+import Layout from "./layout/Layout";
 import "./App.css";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LoginPage />,
-  },
-  {
-    path: "/register",
-    element: <RegisterPage />,
-  },
-  {
-    path: "/dashboard/:userId",
-    element: <DashboardPage />,
-  },
-  {
-    path: "/squads/create",
-    element: <CreateSquadPage />,
-  },
-  {
-    path: "/squads/:squadId",
-    element: <ViewSquadPage />,
-  },
+const WithLayout = (PageComponent: React.FunctionComponent) => (
+  <Layout>
+    <PageComponent />
+  </Layout>
+);
+
+const routes = [
+  { path: "/", element: <LoginPage /> },
+  { path: "/register", element: <RegisterPage /> },
+  { path: "/dashboard/:userId", element: WithLayout(DashboardPage) },
+  { path: "/squads/create", element: WithLayout(CreateSquadPage) },
+  { path: "/squads/:squadId", element: WithLayout(ViewSquadPage) },
   {
     path: "/squads/:squadId/lineups/create",
-    element: <CreateLineupPage />,
+    element: WithLayout(CreateLineupPage),
   },
   {
     path: "/squads/:squadId/lineups/:lineupId",
-    element: <ViewLineupPage />,
+    element: WithLayout(ViewLineupPage),
   },
-]);
+];
+
+const router = createBrowserRouter(routes);
 
 function App() {
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
