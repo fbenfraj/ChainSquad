@@ -49,6 +49,25 @@ export async function createLineup(
   return responseData;
 }
 
-export function addMembersToLineup(lineupId: number, members: Member[]) {
-  console.log("addMembersToLineup:", lineupId, members);
+export async function addMembersToLineup(lineupId: number, members: Member[]) {
+  const data = {
+    users: members,
+  };
+
+  const response = await fetch(`${API_URL}/${lineupId}/add`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${ACCESS_TOKEN}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const responseData = await response.json();
+
+  if (!response.ok) {
+    throw new Error(responseData.error);
+  }
+
+  return responseData;
 }

@@ -12,6 +12,7 @@ export default function DashboardPage() {
       setIsLoading(true);
       try {
         const response = await getProfile();
+
         setUser(response);
       } catch (error) {
         console.error(error);

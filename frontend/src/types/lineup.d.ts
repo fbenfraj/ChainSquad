@@ -13,5 +13,6 @@ type CreateLineupAction = {
 
 type Member = {
   userId: number;
+  username: string;
   role: string;
 };

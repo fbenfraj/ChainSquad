@@ -25,6 +25,25 @@ class UserService {
     }
   }
 
+  async getUserByUsername(username: string): Promise<Partial<User>> {
+    try {
+      const user = await User.findOne({ where: { username: username } });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const squads = await squadsService.getSquadsByUser(user.userId);
+
+      return {
+        ...this.sanitizeUser(user),
+        squads,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getAllUsers(): Promise<Partial<User>[]> {
     try {
       const users = await User.findAll();

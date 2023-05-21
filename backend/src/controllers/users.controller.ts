@@ -5,12 +5,30 @@ import { authenticateToken } from "../auth";
 const router = express.Router();
 
 router.get(
-  "/:id",
+  "/id/:id",
   authenticateToken,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = parseInt(req.params.id);
       const user = await UserService.getUserById(userId);
+      if (user) {
+        res.json(user);
+      } else {
+        res.status(404).send("User not found");
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.get(
+  "/username/:username",
+  authenticateToken,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const username = req.params.username;
+      const user = await UserService.getUserByUsername(username);
       if (user) {
         res.json(user);
       } else {
