@@ -3,25 +3,28 @@ import bcrypt from "bcrypt";
 
 export async function seedUsers() {
   const users: string[] = [
-    "sybreed",
-    "minkey",
-    "flame",
-    "stealth",
-    "rhydon",
-    "foxie",
-    "thomas",
-    "mistafluffy",
+    "Sybreed",
+    "Minkey",
+    "Flame",
+    "Stealth",
+    "Rhydon",
+    "Foxie",
+    "Thomas",
+    "Mistafluffy",
   ];
 
   for (let i = 0; i < users.length; i++) {
+    const normalizedUsername = users[i].toLowerCase();
+
     const existingUser = await User.findOne({
-      where: { username: users[i] },
+      where: { username: normalizedUsername },
     });
 
     if (!existingUser) {
       await User.create({
-        username: users[i],
-        email: `${users[i]}@gmail.com`,
+        username: normalizedUsername,
+        displayName: users[i],
+        email: `${normalizedUsername}@gmail.com`,
         passwordHash: bcrypt.hashSync("password", 10),
       });
     }

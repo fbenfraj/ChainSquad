@@ -42,7 +42,8 @@ class AuthenticationService {
       const passwordHash = await bcrypt.hash(password, 10);
 
       const user = new User({
-        username,
+        username: username.toLowerCase(),
+        displayName: username,
         email,
         passwordHash,
       });
@@ -76,7 +77,11 @@ class AuthenticationService {
           password,
         });
 
-      const user = await User.findOne({ where: { username: validUsername } });
+      const normalizedUsername = validUsername.toLowerCase();
+
+      const user = await User.findOne({
+        where: { username: normalizedUsername },
+      });
 
       if (!user) {
         throw new Error("Invalid credentials");

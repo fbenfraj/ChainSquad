@@ -26,6 +26,9 @@ export default class User extends BaseModel {
   @Column(DataType.STRING)
   username!: string;
 
+  @Column(DataType.STRING)
+  displayName!: string;
+
   @Unique
   @Column(DataType.STRING)
   email: string | undefined;
