@@ -1,14 +1,7 @@
-import {
-  Table,
-  Column,
-  ForeignKey,
-  BelongsTo,
-  DataType,
-} from "sequelize-typescript";
+import { Table, Column, ForeignKey, BelongsTo } from "sequelize-typescript";
 import BaseModel from "./base.model";
 import User from "./user.model";
 import Squad from "./squad.model";
-import { Role } from "../types";
 
 @Table({
   tableName: "UserSquads",

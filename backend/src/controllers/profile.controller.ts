@@ -7,7 +7,6 @@ const router = express.Router();
 router.get("/", authenticateToken, async (req: Request, res: Response) => {
   try {
     const userId = req.user.userId;
-    console.log(req.user);
     const user = await usersService.getUserById(userId);
 
     if (!user) {
