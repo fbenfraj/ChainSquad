@@ -33,8 +33,9 @@ class SquadService {
       await squad.save();
 
       const userSquad = new UserSquad({
-        userId: createdBy,
         squadId: squad.squadId,
+        userId: createdBy,
+        isLeader: true,
       });
 
       await userSquad.save();

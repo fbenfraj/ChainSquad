@@ -16,6 +16,9 @@ export default class UserSquad extends BaseModel {
   @Column
   squadId!: number;
 
+  @Column
+  isLeader!: boolean;
+
   @BelongsTo(() => User)
   user!: User;
 

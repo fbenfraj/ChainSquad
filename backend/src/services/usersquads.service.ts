@@ -8,7 +8,6 @@ class UserSquadService {
     const userSquads = await UserSquad.findAll({
       where: { squadId },
       include: [User],
-      attributes: { exclude: ["passwordHash"] },
     });
 
     const users: User[] = userSquads.map((userSquad) => ({
