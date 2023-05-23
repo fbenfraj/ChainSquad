@@ -6,6 +6,7 @@ import {
 } from "../validations/squad.validation";
 import { IdSchema } from "../validations/general.validation";
 import lineupsService from "./lineups.service";
+import usersquadsService from "./usersquads.service";
 
 class SquadService {
   async createSquad(
@@ -39,10 +40,12 @@ class SquadService {
       const validSquadId = IdSchema.parse(squadId);
       const squad = await Squad.findByPk(validSquadId);
       const lineups = await lineupsService.getLineupsBySquad(validSquadId);
+      const members = await usersquadsService.getSquadMembers(validSquadId);
 
       return {
         ...squad?.get(),
         lineups,
+        members,
       };
     } catch (error) {
       if (error instanceof z.ZodError) {

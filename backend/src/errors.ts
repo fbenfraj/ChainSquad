@@ -30,10 +30,12 @@ export function handleError(
     case "User not found":
     case "No users found":
     case "Squad not found":
-    case "No squads found for the given user":
     case "Lineup not found":
+    case "No squads found for the given user":
     case "No lineups found for the given squad":
     case "No members found for the given lineup":
+    case "Inviter is not in the squad":
+    case "Invitee is already in the squad":
       return res.status(404).json({ error: err.message });
     default:
       console.error(`An unexpected error occured: ${err.message}`);

@@ -1,3 +1,4 @@
+import { InvitationStatus } from "../models/invitation.model";
 import Lineup from "../models/lineup.model";
 import User from "../models/user.model";
 
@@ -6,12 +7,6 @@ export enum Role {
   Coach = "Coach",
   Player = "Player",
   Other = "Other",
-}
-
-export enum InvitationStatus {
-  Pending = "Pending",
-  Accepted = "Accepted",
-  Declined = "Declined",
 }
 
 export interface SanitizedUser extends Omit<User, "passwordHash"> {}

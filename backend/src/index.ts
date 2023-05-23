@@ -7,6 +7,7 @@ import usersRoutes from "./controllers/users.controller";
 import profileRoutes from "./controllers/profile.controller";
 import squadsRoutes from "./controllers/squads.controller";
 import lineupsRoutes from "./controllers/lineups.controller";
+import invitationsRoutes from "./controllers/invitations.controller";
 import { handleError } from "./errors";
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use("/users", usersRoutes);
 app.use("/profile", profileRoutes);
 app.use("/squads", squadsRoutes);
 app.use("/lineups", lineupsRoutes);
+app.use("/invitations", invitationsRoutes);
 
 app.use(handleError);
 

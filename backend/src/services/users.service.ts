@@ -2,7 +2,7 @@ import User from "../models/user.model";
 import { UpdateUserValidationSchema } from "../validations/user.validation";
 import { IdSchema } from "../validations/general.validation";
 import squadsService from "./squads.service";
-import { UserUpdateParams } from "../types";
+import { SanitizedUser, UserUpdateParams } from "../types";
 
 class UserService {
   async getUserById(userId: number): Promise<Partial<User>> {
@@ -108,7 +108,7 @@ class UserService {
     }
   }
 
-  sanitizeUser(user: User): Partial<User> {
+  sanitizeUser(user: User): SanitizedUser {
     const sanitizedUser = user.toJSON() as User;
     delete sanitizedUser.passwordHash;
     return sanitizedUser;
