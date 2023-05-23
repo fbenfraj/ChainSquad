@@ -66,11 +66,11 @@ class InvitationService {
     }
   }
 
-  async getInvitationsByUser(userId: number): Promise<Invitation[]> {
+  async getInvitations(userId: number): Promise<Invitation[]> {
     try {
       const validUserId = IdSchema.parse(userId);
       const invitations = await Invitation.findAll({
-        where: { inviteeId: validUserId },
+        where: { invitedId: validUserId },
       });
 
       return invitations;

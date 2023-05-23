@@ -25,3 +25,17 @@ export async function sendInvitation(
 
   return await response.json();
 }
+
+export async function getInvitations(): Promise<Invitation[]> {
+  const response = await fetch(`${API_URL}`, {
+    headers: {
+      Authorization: `Bearer ${ACCESS_TOKEN}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Error getting invitations");
+  }
+
+  return await response.json();
+}

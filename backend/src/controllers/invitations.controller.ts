@@ -43,25 +43,17 @@ router.put(
   }
 );
 
-router.get(
-  "/user/:userId",
-  authenticateToken,
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { userId } = req.params;
-      const invitations = await invitationsService.getInvitationsByUser(
-        parseInt(userId)
-      );
-      if (invitations && invitations.length > 0) {
-        res.json(invitations);
-      } else {
-        res.status(404).send("No invitations found for the user");
-      }
-    } catch (error) {
-      next(error);
-    }
+router.get("/", authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const userId = req.user.userId;
+    const invitations = await invitationsService.getInvitations(userId);
+
+    return res.json(invitations);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred" });
   }
-);
+});
 
 router.delete(
   "/:invitationCode",
