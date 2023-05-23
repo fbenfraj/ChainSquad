@@ -11,7 +11,7 @@ export default function ViewLineupPage() {
   }>();
   const [lineup, setLineup] = useState<Lineup | null>(null);
   const [addedName, setAddedName] = useState("");
-  const [addedRole, setAddedRole] = useState("");
+  const [addedRole, setAddedRole] = useState("Manager");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
