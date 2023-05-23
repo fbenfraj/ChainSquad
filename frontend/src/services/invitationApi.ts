@@ -3,7 +3,7 @@ const API_URL = `${import.meta.env.VITE_BACKEND_URL}/invitations`;
 export async function sendInvitation(
   squadId: number,
   userId: number
-): Promise<void> {
+): Promise<Response> {
   const data = {
     squadId,
     invitedId: userId,
@@ -22,7 +22,7 @@ export async function sendInvitation(
     throw new Error("Error sending invitation");
   }
 
-  return await response.json();
+  return response;
 }
 
 export async function getInvitations(): Promise<Invitation[]> {

@@ -1,6 +1,7 @@
 import User from "../models/user.model";
 import UserSquad from "../models/usersquad.model";
 import { SanitizedUser } from "../types";
+import usersService from "./users.service";
 
 class UserSquadService {
   async getSquadMembers(squadId: number): Promise<SanitizedUser[]> {
@@ -10,11 +11,15 @@ class UserSquadService {
       attributes: { exclude: ["passwordHash"] },
     });
 
-    const users = userSquads.map((userSquad) => ({
+    const users: User[] = userSquads.map((userSquad) => ({
       ...userSquad.user.get(),
     }));
 
-    return users;
+    const sanitizedMembers = users.map((member) =>
+      usersService.sanitizeUser(member)
+    );
+
+    return sanitizedMembers;
   }
 }
 

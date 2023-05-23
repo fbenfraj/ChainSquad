@@ -40,7 +40,13 @@ export default function ViewSquadPage() {
 
       if (!user || !squadId) return;
 
-      await sendInvitation(parseInt(squadId), user.userId);
+      const response = await sendInvitation(parseInt(squadId), user.userId);
+
+      if (response.status === 200) {
+        alert(`Invitation sent to ${user.displayName} !`);
+        setAddedName("");
+        setError("");
+      }
     } catch (error) {
       setError((error as Error).message);
     }
@@ -52,23 +58,23 @@ export default function ViewSquadPage() {
 
   return (
     <div>
+      <h1>squadName: {squad?.squadName}</h1>
+      <h2>squadId: {squad?.squadId}</h2>
+      <h3>Members:</h3>
+      {squad?.members.map((member) => (
+        <li key={member.userId}>{member.displayName}</li>
+      ))}
+      <label htmlFor="add">Add member</label>
+      <input
+        type="text"
+        id="add"
+        value={addedName}
+        onChange={(event) => setAddedName(event.target.value)}
+      />
+      <button onClick={handleAddMember}>Add</button>
+      {error && <p>{error}</p>}
       {squad?.lineups && squad?.lineups?.length > 0 ? (
         <div>
-          <h1>squadName: {squad?.squadName}</h1>
-          <h2>squadId: {squad.squadId}</h2>
-          <h3>Members:</h3>
-          {squad.members.map((member) => (
-            <li key={member.userId}>{member.displayName}</li>
-          ))}
-          <label htmlFor="add">Add member</label>
-          <input
-            type="text"
-            id="add"
-            value={addedName}
-            onChange={(event) => setAddedName(event.target.value)}
-          />
-          <button onClick={handleAddMember}>Add</button>
-          {error && <p>{error}</p>}
           <h3>Lineups:</h3>
           <ul>
             {squad.lineups.map((lineup) => (
@@ -83,7 +89,7 @@ export default function ViewSquadPage() {
         </div>
       ) : (
         // TODO: Remove this in the future as a squad will have at least the creator as a member
-        <p>This squad does not have any members yet.</p>
+        <p>This squad does not have any lineups yet.</p>
       )}
       <Link to={`/squads/${squadId}/lineups/create`}>
         <button>Add lineup</button>

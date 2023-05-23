@@ -8,6 +8,8 @@ import { IdSchema } from "../validations/general.validation";
 import lineupsService from "./lineups.service";
 import usersquadsService from "./usersquads.service";
 import invitationsService from "./invitations.service";
+import UserSquad from "../models/usersquad.model";
+import { SanitizedUser } from "../types";
 
 class SquadService {
   async createSquad(
@@ -30,6 +32,13 @@ class SquadService {
 
       await squad.save();
 
+      const userSquad = new UserSquad({
+        userId: createdBy,
+        squadId: squad.squadId,
+      });
+
+      await userSquad.save();
+
       return squad;
     } catch (error) {
       throw error;
@@ -41,7 +50,9 @@ class SquadService {
       const validSquadId = IdSchema.parse(squadId);
       const squad = await Squad.findByPk(validSquadId);
       const lineups = await lineupsService.getLineupsBySquad(validSquadId);
-      const members = await usersquadsService.getSquadMembers(validSquadId);
+      const members: SanitizedUser[] = await usersquadsService.getSquadMembers(
+        validSquadId
+      );
       const invitations = await invitationsService.getInvitationsBySquad(
         validSquadId
       );

@@ -108,10 +108,13 @@ class UserService {
     }
   }
 
-  sanitizeUser(user: User): SanitizedUser {
-    const sanitizedUser = user.toJSON() as User;
+  sanitizeUser(user: User | Record<string, any>): SanitizedUser {
+    const userPlainObject = typeof user.get === "function" ? user.get() : user;
+    const sanitizedUser = { ...userPlainObject };
+
     delete sanitizedUser.passwordHash;
-    return sanitizedUser;
+
+    return sanitizedUser as SanitizedUser;
   }
 }
 

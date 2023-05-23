@@ -1,6 +1,6 @@
 import { InvitationStatus } from "../models/invitation.model";
 import Lineup from "../models/lineup.model";
-import User from "../models/user.model";
+import Squad from "../models/squad.model";
 
 export enum Role {
   Manager = "Manager",
@@ -9,8 +9,14 @@ export enum Role {
   Other = "Other",
 }
 
-export interface SanitizedUser extends Omit<User, "passwordHash"> {}
-
+export type SanitizedUser = {
+  userId: number;
+  username: string;
+  displayName: string;
+  email: string | undefined;
+  walletAddress: string | undefined;
+  squads: Squad[] | undefined;
+};
 export interface UserWithRole extends SanitizedUser {
   role: Role;
 }
