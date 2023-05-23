@@ -8,27 +8,17 @@ import UserSquad from "../models/usersquad.model";
 
 class InvitationService {
   async createInvitation(
-    inviterId: number,
-    inviteeId: number,
+    invitedId: number,
     squadId: number
   ): Promise<Invitation> {
     try {
       InvitationValidationSchema.parse({
-        inviterId,
-        inviteeId,
+        invitedId,
         squadId,
       });
 
-      const inviterInSquad = await UserSquad.findOne({
-        where: { userId: inviterId, squadId: squadId },
-      });
-
-      if (!inviterInSquad) {
-        throw new Error("Inviter is not in the squad");
-      }
-
       const inviteeInSquad = await UserSquad.findOne({
-        where: { userId: inviteeId, squadId: squadId },
+        where: { userId: invitedId, squadId },
       });
 
       if (inviteeInSquad) {
@@ -36,8 +26,7 @@ class InvitationService {
       }
 
       const invitation = new Invitation({
-        inviterId,
-        inviteeId,
+        invitedId,
         squadId,
       });
 
@@ -85,6 +74,38 @@ class InvitationService {
       });
 
       return invitations;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getInvitationsBySquad(squadId: number): Promise<Invitation[]> {
+    try {
+      const validSquadId = IdSchema.parse(squadId);
+      const invitations = await Invitation.findAll({
+        where: { squadId: validSquadId },
+      });
+
+      return invitations;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteInvitation(invitationCode: string): Promise<boolean> {
+    try {
+      const validInvitationCode = IdSchema.parse(invitationCode);
+      const invitation = await Invitation.findOne({
+        where: { invitationCode: validInvitationCode },
+      });
+
+      if (!invitation) {
+        return false;
+      }
+
+      await invitation.destroy();
+
+      return true;
     } catch (error) {
       throw error;
     }

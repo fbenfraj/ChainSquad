@@ -4,6 +4,7 @@ type Squad = {
   description: string;
   createdBy: number;
   lineups: Lineup[];
+  members: User[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;

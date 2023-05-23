@@ -2,11 +2,15 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { getSquad } from "../../services/squadApi";
+import { getUserByUsername } from "../../services/userApi";
+import { sendInvitation } from "../../services/invitationApi";
 
 export default function ViewSquadPage() {
   const { squadId } = useParams<{ squadId: string }>();
   const [squad, setSquad] = useState<Squad | null>(null);
+  const [addedName, setAddedName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const userId = localStorage.getItem("userId");
 
@@ -30,6 +34,18 @@ export default function ViewSquadPage() {
     fetchData();
   }, [squadId]);
 
+  const handleAddMember = async () => {
+    try {
+      const user = await getUserByUsername(addedName);
+
+      if (!user || !squadId) return;
+
+      await sendInvitation(parseInt(squadId), user.userId);
+    } catch (error) {
+      setError((error as Error).message);
+    }
+  };
+
   if (isLoading) {
     return <p>Loading...</p>;
   }
@@ -40,6 +56,19 @@ export default function ViewSquadPage() {
         <div>
           <h1>squadName: {squad?.squadName}</h1>
           <h2>squadId: {squad.squadId}</h2>
+          <h3>Members:</h3>
+          {squad.members.map((member) => (
+            <li key={member.userId}>{member.displayName}</li>
+          ))}
+          <label htmlFor="add">Add member</label>
+          <input
+            type="text"
+            id="add"
+            value={addedName}
+            onChange={(event) => setAddedName(event.target.value)}
+          />
+          <button onClick={handleAddMember}>Add</button>
+          {error && <p>{error}</p>}
           <h3>Lineups:</h3>
           <ul>
             {squad.lineups.map((lineup) => (
@@ -53,7 +82,8 @@ export default function ViewSquadPage() {
           </ul>
         </div>
       ) : (
-        <p>This squad does not have any lineup yet.</p>
+        // TODO: Remove this in the future as a squad will have at least the creator as a member
+        <p>This squad does not have any members yet.</p>
       )}
       <Link to={`/squads/${squadId}/lineups/create`}>
         <button>Add lineup</button>

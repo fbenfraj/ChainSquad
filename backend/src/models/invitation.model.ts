@@ -27,13 +27,6 @@ export default class Invitation extends BaseModel {
   @Column({ type: DataType.UUID })
   invitationCode: string | undefined;
 
-  @ForeignKey(() => User)
-  @Column({ type: DataType.INTEGER })
-  inviterId: number | undefined;
-
-  @BelongsTo(() => User, "inviterId")
-  inviter: User | undefined;
-
   @ForeignKey(() => Squad)
   @Column({ type: DataType.INTEGER })
   squadId: number | undefined;
@@ -43,10 +36,10 @@ export default class Invitation extends BaseModel {
 
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER })
-  inviteeId: number | undefined;
+  invitedId: number | undefined;
 
-  @BelongsTo(() => User, "inviteeId")
-  invitee: User | undefined;
+  @BelongsTo(() => User, "invitedId")
+  invited: User | undefined;
 
   @Default(InvitationStatus.PENDING)
   @Column(DataType.ENUM("pending", "accepted", "declined", "expired"))
