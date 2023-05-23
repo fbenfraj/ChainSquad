@@ -1,12 +1,11 @@
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/lineups`;
-const ACCESS_TOKEN = localStorage.getItem("accessToken");
 
 export async function getLineup(lineupId: number): Promise<Lineup> {
   const response = await fetch(`${API_URL}/${lineupId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
   });
 
@@ -35,7 +34,7 @@ export async function createLineup(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
     body: JSON.stringify(data),
   });
@@ -58,7 +57,7 @@ export async function addMembersToLineup(lineupId: number, members: Member[]) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
     body: JSON.stringify(data),
   });

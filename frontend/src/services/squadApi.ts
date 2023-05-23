@@ -1,12 +1,11 @@
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/squads`;
-const ACCESS_TOKEN = localStorage.getItem("accessToken");
 
 export async function getSquad(squadId: number): Promise<Squad> {
   const response = await fetch(`${API_URL}/${squadId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
   });
 
@@ -30,7 +29,7 @@ export async function createSquad(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
     body: JSON.stringify(data),
   });

@@ -1,5 +1,4 @@
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/invitations`;
-const ACCESS_TOKEN = localStorage.getItem("accessToken");
 
 export async function sendInvitation(
   squadId: number,
@@ -14,7 +13,7 @@ export async function sendInvitation(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
     body: JSON.stringify(data),
   });
@@ -29,7 +28,8 @@ export async function sendInvitation(
 export async function getInvitations(): Promise<Invitation[]> {
   const response = await fetch(`${API_URL}`, {
     headers: {
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
   });
 
