@@ -107,6 +107,7 @@ class InvitationService {
         {
           userId: validUserId,
           squadId: invitation.squadId,
+          isLeader: false,
         },
         { transaction }
       );

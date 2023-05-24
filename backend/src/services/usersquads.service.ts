@@ -4,19 +4,24 @@ import { SanitizedUser } from "../types";
 import usersService from "./users.service";
 
 class UserSquadService {
-  async getSquadMembers(squadId: number): Promise<SanitizedUser[]> {
+  async getSquadMembers(
+    squadId: number
+  ): Promise<(SanitizedUser & { isLeader: boolean })[]> {
     const userSquads = await UserSquad.findAll({
       where: { squadId },
       include: [User],
     });
 
-    const users: User[] = userSquads.map((userSquad) => ({
-      ...userSquad.user.get(),
-    }));
+    const usersWithLeadershipStatus: (User & { isLeader: boolean })[] =
+      userSquads.map((userSquad) => ({
+        ...userSquad.user.get(),
+        isLeader: userSquad.isLeader,
+      }));
 
-    const sanitizedMembers = users.map((member) =>
-      usersService.sanitizeUser(member)
-    );
+    const sanitizedMembers = usersWithLeadershipStatus.map((member) => ({
+      ...usersService.sanitizeUser(member),
+      isLeader: member.isLeader,
+    }));
 
     return sanitizedMembers;
   }
