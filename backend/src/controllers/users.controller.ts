@@ -53,24 +53,6 @@ router.get(
   }
 );
 
-router.put(
-  "/:id",
-  authenticateToken,
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const userId = parseInt(req.params.id);
-      const user = await UserService.updateUser(userId, req.body);
-      if (user) {
-        res.json(user);
-      } else {
-        res.status(404).send("User not found");
-      }
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
 router.delete(
   "/:id",
   authenticateToken,
