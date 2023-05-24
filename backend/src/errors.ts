@@ -30,6 +30,7 @@ export function handleError(
     case "Username or email already exists":
     case "Invalid refresh token":
     case "Invitee is already in the squad":
+    case "Invitee has already been invited to the squad":
       return res.status(409).json({ error: err.message });
 
     case "User not found":

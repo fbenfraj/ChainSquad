@@ -26,6 +26,14 @@ class InvitationService {
         throw new Error("Invitee is already in the squad");
       }
 
+      const existingInvitation = await Invitation.findOne({
+        where: { invitedId, squadId, status: InvitationStatus.PENDING },
+      });
+
+      if (existingInvitation) {
+        throw new Error("Invitee has already been invited to the squad");
+      }
+
       const invitation = new Invitation({
         invitedId,
         squadId,
