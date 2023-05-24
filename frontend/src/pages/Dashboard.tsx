@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getProfile } from "../services/profileApi";
-import { getInvitations } from "../services/invitationApi";
+import { getInvitations, updateInvitation } from "../services/invitationApi";
 
 export default function DashboardPage() {
   const { userId } = useParams<{ userId: string }>();
@@ -15,9 +15,12 @@ export default function DashboardPage() {
       try {
         const fetchedUser = await getProfile();
         const fetchedInvitations = await getInvitations();
+        const pendingInvitations = fetchedInvitations.filter(
+          (invitation) => invitation.status === "pending"
+        );
 
         setUser(fetchedUser);
-        setInvitations(fetchedInvitations);
+        setInvitations(pendingInvitations);
       } catch (error) {
         console.error(error);
       } finally {
@@ -27,6 +30,31 @@ export default function DashboardPage() {
 
     fetchData();
   }, []);
+
+  const handleInvitation = async (
+    invitationCode: string,
+    invitationAnswer: string
+  ) => {
+    try {
+      const invitationResponse = await updateInvitation(
+        invitationCode,
+        invitationAnswer
+      );
+
+      if (invitationResponse.status !== 200) {
+        throw new Error("Failed to accept invitation");
+      }
+
+      const updatedInvitations = invitations.filter(
+        (invitation) => invitation.invitationCode !== invitationCode
+      );
+
+      setInvitations(updatedInvitations);
+      alert("Invitation accepted!");
+    } catch (error) {
+      alert(error);
+    }
+  };
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -44,8 +72,21 @@ export default function DashboardPage() {
           <ul>
             {invitations.map((invitation) => (
               <li key={invitation.invitationCode}>
-                Invited to join Squad {invitation.squadId} (status:
-                {invitation.status})
+                Invited to join Squad {invitation.squadId}
+                <button
+                  onClick={() =>
+                    handleInvitation(invitation.invitationCode, "accept")
+                  }
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() =>
+                    handleInvitation(invitation.invitationCode, "decline")
+                  }
+                >
+                  Decline
+                </button>
               </li>
             ))}
           </ul>

@@ -3,8 +3,9 @@ import {
   InvitationValidationSchema,
   InvitationUpdateSchema,
 } from "../validations/invitation.validation";
-import { IdSchema } from "../validations/general.validation";
+import { IdSchema, UuidSchema } from "../validations/general.validation";
 import UserSquad from "../models/usersquad.model";
+import { sequelize } from "../database";
 
 class InvitationService {
   async createInvitation(
@@ -43,7 +44,7 @@ class InvitationService {
     updateFields: { status?: InvitationStatus }
   ): Promise<Invitation | null> {
     try {
-      const validInvitationCode = IdSchema.parse(invitationCode);
+      const validInvitationCode = UuidSchema.parse(invitationCode);
       InvitationUpdateSchema.parse(updateFields);
 
       const invitation = await Invitation.findOne({
@@ -62,6 +63,59 @@ class InvitationService {
 
       return invitation;
     } catch (error) {
+      throw error;
+    }
+  }
+
+  async acceptInvitation(
+    invitationCode: string,
+    userId: number
+  ): Promise<Invitation | null> {
+    const transaction = await sequelize.transaction();
+
+    try {
+      const validInvitationCode = UuidSchema.parse(invitationCode);
+      const validUserId = IdSchema.parse(userId);
+
+      const invitation = await Invitation.findOne({
+        where: { invitationCode: validInvitationCode },
+      });
+
+      if (!invitation) {
+        throw new Error("Invitation not found");
+      }
+
+      if (invitation.invitedId !== validUserId) {
+        throw new Error("User not authorized to accept this invitation");
+      }
+
+      const [affectedRowCount] = await Invitation.update(
+        { status: InvitationStatus.ACCEPTED },
+        {
+          where: {
+            invitationCode: validInvitationCode,
+          },
+          transaction,
+        }
+      );
+
+      if (affectedRowCount === 0) {
+        throw new Error("Failed to update invitation");
+      }
+
+      await UserSquad.create(
+        {
+          userId: validUserId,
+          squadId: invitation.squadId,
+        },
+        { transaction }
+      );
+
+      await transaction.commit();
+
+      return invitation;
+    } catch (error) {
+      await transaction.rollback();
       throw error;
     }
   }

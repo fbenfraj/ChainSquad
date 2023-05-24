@@ -39,3 +39,23 @@ export async function getInvitations(): Promise<Invitation[]> {
 
   return await response.json();
 }
+
+export async function updateInvitation(
+  invitationCode: string,
+  invitationAction: string
+): Promise<Response> {
+  const response = await fetch(`${API_URL}/${invitationAction}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+    body: JSON.stringify({ invitationCode }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error updating invitation");
+  }
+
+  return response;
+}

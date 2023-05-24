@@ -43,6 +43,29 @@ router.put(
   }
 );
 
+router.post(
+  "/accept",
+  authenticateToken,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { invitationCode } = req.body;
+      console.log("invitationCode", invitationCode);
+      const userId = req.user.userId;
+      const invitation = await invitationsService.acceptInvitation(
+        invitationCode,
+        userId
+      );
+      if (invitation) {
+        res.json(invitation);
+      } else {
+        res.status(404).send("Invitation not found");
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 router.get("/", authenticateToken, async (req: Request, res: Response) => {
   try {
     const userId = req.user.userId;
