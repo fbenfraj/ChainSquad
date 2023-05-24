@@ -132,7 +132,12 @@ class SquadService {
   async getSquadsByUser(userId: number): Promise<Squad[]> {
     try {
       const validUserId = IdSchema.parse(userId);
-      const squads = await Squad.findAll({ where: { createdBy: validUserId } });
+      const userSquads = await UserSquad.findAll({
+        where: { userId: validUserId },
+        include: [Squad],
+      });
+
+      const squads: Squad[] = userSquads.map((userSquad) => userSquad.squad);
 
       return squads;
     } catch (error) {
