@@ -130,6 +130,45 @@ class InvitationService {
     }
   }
 
+  async declineInvitation(
+    invitationCode: string,
+    userId: number
+  ): Promise<Invitation | null> {
+    try {
+      const validInvitationCode = UuidSchema.parse(invitationCode);
+      const validUserId = IdSchema.parse(userId);
+
+      const invitation = await Invitation.findOne({
+        where: { invitationCode: validInvitationCode },
+      });
+
+      if (!invitation) {
+        throw new Error("Invitation not found");
+      }
+
+      if (invitation.invitedId !== validUserId) {
+        throw new Error("User not authorized to decline this invitation");
+      }
+
+      const [affectedRowCount] = await Invitation.update(
+        { status: InvitationStatus.DECLINED },
+        {
+          where: {
+            invitationCode: validInvitationCode,
+          },
+        }
+      );
+
+      if (affectedRowCount === 0) {
+        throw new Error("Failed to update invitation");
+      }
+
+      return invitation;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getInvitations(invitedId: number): Promise<Invitation[]> {
     try {
       IdSchema.parse(invitedId);

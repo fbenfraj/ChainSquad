@@ -50,7 +50,6 @@ export default function DashboardPage() {
       );
 
       setInvitations(updatedInvitations);
-      alert("Invitation accepted!");
     } catch (error) {
       alert(error);
     }

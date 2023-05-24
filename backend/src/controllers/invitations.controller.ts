@@ -49,12 +49,35 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { invitationCode } = req.body;
-      console.log("invitationCode", invitationCode);
       const userId = req.user.userId;
       const invitation = await invitationsService.acceptInvitation(
         invitationCode,
         userId
       );
+
+      if (invitation) {
+        res.json(invitation);
+      } else {
+        res.status(404).send("Invitation not found");
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.post(
+  "/decline",
+  authenticateToken,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { invitationCode } = req.body;
+      const userId = req.user.userId;
+      const invitation = await invitationsService.declineInvitation(
+        invitationCode,
+        userId
+      );
+
       if (invitation) {
         res.json(invitation);
       } else {
