@@ -6,6 +6,7 @@ import {
 import { IdSchema, UuidSchema } from "../validations/general.validation";
 import UserSquad from "../models/usersquad.model";
 import { sequelize } from "../database";
+import Squad from "../models/squad.model";
 
 class InvitationService {
   async createInvitation(
@@ -129,12 +130,23 @@ class InvitationService {
     }
   }
 
-  async getInvitations(userId: number): Promise<Invitation[]> {
+  async getInvitations(invitedId: number): Promise<Invitation[]> {
     try {
-      const validUserId = IdSchema.parse(userId);
+      IdSchema.parse(invitedId);
+
       const invitations = await Invitation.findAll({
-        where: { invitedId: validUserId },
+        where: { invitedId },
+        include: [
+          {
+            model: Squad,
+            attributes: ["squadName"],
+          },
+        ],
       });
+
+      if (!invitations) {
+        throw new Error("No invitations found");
+      }
 
       return invitations;
     } catch (error) {

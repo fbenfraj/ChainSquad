@@ -37,7 +37,7 @@ export function handleError(
     case "No users found":
     case "Squad not found":
     case "Lineup not found":
-    case "Invitation not found":
+    case "Invitation not found" || "No invitations found":
     case "No squads found for the given user":
     case "No lineups found for the given squad":
     case "No members found for the given lineup":
